@@ -1,1 +1,6 @@
-# Test content
+# AI-PM Copilot // Verification Status
+
+- Architectural Gate: Passed
+- Test Suite: Vitest (globals, happy-dom) configured in vitest.config.ts
+- Core Unit Tests: src/tests/riceAndSynthesis.test.ts (RICE scoring, boundary conditions, heuristic fallback)
+- Security Gate: Server-side API key containment, sanitized complaint lengths
