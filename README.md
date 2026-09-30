@@ -34,12 +34,13 @@ Paste any user complaint → AI generates:
 
 | Layer | Technology | Why |
 |---|---|---|
-| Frontend | React 19 + Vite + TypeScript | Same stack as AeroDock |
-| AI Engine | Google Gemini API (free tier) | Best free-tier rate limits |
-| Database | Neon Serverless Postgres | Save history, already familiar |
-| Auth | Firebase Auth | Quick setup, already used |
-| Deploy | Vercel | Free, instant CI/CD |
-| Styling | Tailwind CSS | Fast, clean UI |
+| Languages & Frameworks | TypeScript, React 19, Vite | Modern, type-safe frontend architecture |
+| Testing | Vitest | Fast unit and integration test runner |
+| AI Engine | Google Gemini API (free tier) | Best free-tier rate limits for PRD, RICE, & A/B testing generation |
+| Database | Neon Serverless Postgres | Persists generation history and user logs |
+| Auth | Firebase Auth | User authentication and session management |
+| Deploy | Vercel | Free, instant CI/CD deployment target |
+| Styling | Tailwind CSS | Fast, clean utility-first UI styling |
 
 ---
 
