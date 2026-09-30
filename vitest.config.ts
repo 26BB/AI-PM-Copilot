@@ -7,6 +7,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
+    coverage: {
+      thresholds: {
+        lines: 70,
+      },
+    },
   },
   resolve: {
     alias: {
