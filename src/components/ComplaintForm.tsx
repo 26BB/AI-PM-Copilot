@@ -78,4 +78,41 @@ export function ComplaintForm({
     void onSubmit(complaintText.trim());
   };
 
-  return (\n    <form onSubmit={handleSubmit} className=\"complaint-form\" aria-label=\"Complaint Input Form\">\n      <div className=\"form-group\">\n        <label htmlFor=\"complaint-input\" className=\"form-label\">\n          Raw User Complaint or Feedback\n        </label>\n        <textarea\n          id=\"complaint-input\"\n          value={complaintText}\n          onChange={handleInputChange}\n          placeholder={placeholder}\n          disabled={disabled || isLoading}\n          rows={6}\n          className=\"form-textarea\"\n          aria-invalid={Boolean(validationError)}\n          aria-describedby={validationError ? 'complaint-error' : undefined}\n        />\n        <div className=\"form-footer\">\n          <span className=\"character-count\" aria-live=\"polite\">\n            {complaintText.length} characters\n          </span>\n          {validationError && (\n            <span id=\"complaint-error\" className=\"error-message\" role=\"alert\">\n              {validationError}\n            </span>\n          )}\n        </div>\n      </div>\n      <button\n        type=\"submit\"\n        disabled={disabled || isLoading || !complaintText.trim()}\n        className=\"submit-button\"\n      >\n        {isLoading ? 'Generating PRD...' : 'Generate PRD & RICE Score'}\n      </button>\n    </form>\n  );\n}
+  return (
+    <form onSubmit={handleSubmit} className="complaint-form" aria-label="Complaint Input Form">
+      <div className="form-group">
+        <label htmlFor="complaint-input" className="form-label">
+          Raw User Complaint or Feedback
+        </label>
+        <textarea
+          id="complaint-input"
+          value={complaintText}
+          onChange={handleInputChange}
+          placeholder={placeholder}
+          disabled={disabled || isLoading}
+          rows={6}
+          className="form-textarea"
+          aria-invalid={Boolean(validationError)}
+          aria-describedby={validationError ? 'complaint-error' : undefined}
+        />
+        <div className="form-footer">
+          <span className="character-count" aria-live="polite">
+            {complaintText.length} characters
+          </span>
+          {validationError && (
+            <span id="complaint-error" className="error-message" role="alert">
+              {validationError}
+            </span>
+          )}
+        </div>
+      </div>
+      <button
+        type="submit"
+        disabled={disabled || isLoading || !complaintText.trim()}
+        className="submit-button"
+      >
+        {isLoading ? 'Generating PRD...' : 'Generate PRD & RICE Score'}
+      </button>
+    </form>
+  );
+}
