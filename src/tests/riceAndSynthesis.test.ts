@@ -84,4 +84,24 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('SAML SSO login failed after upgrading to higher PRICE tier');
     expect(route).toBe('sso');
   });
+
+  /**
+   * Real-World Scenario: Negative Reach or Impact Inputs
+   * PMs or external integrations may accidentally input negative reach or impact values.
+   * The RICE score calculation must clamp negative results to the minimum score floor of 0.1.
+   */
+  it('clamps negative reach or impact calculations to the minimum score floor of 0.1', () => {
+    const score = calculateRiceScore(-1000, 2.0, 50, 1.0);
+    expect(score).toBe(0.1);
+  });
+
+  /**
+   * Real-World Scenario: Complex Multi-Keyword Feedback with Mixed Case and Punctuation
+   * Customer complaints mentioning tax/billing and enterprise SSO authentication (e.g. "NEED SAML TAX INVOICE!!!")
+   * should prioritize security/identity routing ('sso') while properly normalizing uppercase text and punctuation.
+   */
+  it('routes uppercase multi-keyword complaints with special characters to sso priority', () => {
+    const route = routeHeuristicComplaint('URGENT: NEED OKTA / SAML INTEGRATION FOR OUR TAX INVOICE!!!');
+    expect(route).toBe('sso');
+  });
 });
