@@ -35,11 +35,11 @@ Paste any user complaint → AI generates:
 | Layer | Technology | Why |
 |---|---|---|
 | Languages & Frameworks | TypeScript, React 19, Vite | Modern, type-safe frontend architecture |
-| Testing | Vitest | Fast unit and integration test runner |
-| AI Engine | Google Gemini API (free tier) | Best free-tier rate limits for PRD, RICE, & A/B testing generation |
+| Testing | Vitest | Fast unit and integration test runner with 70%+ line coverage enforcement |
+| AI Engine | Gemini API (Google AI) | High-performance model for PRD, RICE, & A/B testing artifact generation |
 | Database | Neon Serverless Postgres | Persists generation history and user logs |
 | Auth | Firebase Auth | User authentication and session management |
-| Deploy | Vercel | Free, instant CI/CD deployment target |
+| Deploy | Vercel | Instant, production CI/CD deployment target |
 | Styling | Tailwind CSS | Fast, clean utility-first UI styling |
 
 ---
