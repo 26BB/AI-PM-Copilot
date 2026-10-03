@@ -84,4 +84,33 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('SAML SSO login failed after upgrading to higher PRICE tier');
     expect(route).toBe('sso');
   });
+
+  /**
+   * Real-World Scenario: Negative Reach or Impact Boundary Clamping
+   * When user inputs invalid negative values for reach or impact, the calculation
+   * must bound the resulting RICE score to the minimum score floor (0.1) without producing invalid or negative scores.
+   */
+  it('clamps RICE score to minimum floor when negative reach or impact is provided', () => {
+    const negativeReachScore = calculateRiceScore(-1000, 2.0, 80, 2.0);
+    expect(negativeReachScore).toBe(0.1);
+
+    const negativeImpactScore = calculateRiceScore(1000, -2.0, 80, 2.0);
+    expect(negativeImpactScore).toBe(0.1);
+  });
+
+  /**
+   * Real-World Scenario: Multiline User Complaints with Excessive Whitespace
+   * Support tickets and feedback forms frequently contain multiline text, tabs, and newlines.
+   * The router must normalize text across newlines and route complaints containing billing terms accurately.
+   */
+  it('correctly routes multiline customer feedback with whitespace to billing', () => {
+    const multilineComplaint = `
+      Hello Support Team,
+
+      We were charged double on our monthly invoice!
+      Please issue a refund or correction for the tax amount.
+    `;
+    const route = routeHeuristicComplaint(multilineComplaint);
+    expect(route).toBe('billing');
+  });
 });
