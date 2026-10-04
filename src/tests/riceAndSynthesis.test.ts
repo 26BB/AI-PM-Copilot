@@ -113,4 +113,24 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint(multilineComplaint);
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Negative Confidence Input Safeguard
+   * If a user enters an invalid negative percentage for confidence, the RICE calculation
+   * must bound the resulting score to the minimum score floor (0.1) without throwing or producing negative scores.
+   */
+  it('clamps RICE score to minimum floor when negative confidence is provided', () => {
+    const negativeConfScore = calculateRiceScore(5000, 2.0, -50, 2.0);
+    expect(negativeConfScore).toBe(0.1);
+  });
+
+  /**
+   * Real-World Scenario: Enterprise User Complaints with Okta Integration Keywords and Hyphenated Terms
+   * Support tickets regarding identity providers like Okta often include mixed-casing and punctuation
+   * such as "Okta-Identity" or "[OKTA] auth error". The router must correctly classify these as 'sso'.
+   */
+  it('routes Okta enterprise identity complaints with hyphens and brackets to sso', () => {
+    const route = routeHeuristicComplaint('[OKTA-IDENTITY] Users fail to sign in via OKTA widget after update.');
+    expect(route).toBe('sso');
+  });
 });
