@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ComplaintForm } from './components/ComplaintForm';
 import { PrdSkeletonDisplay } from './components/PrdSkeletonDisplay';
+import { RiceScoreDisplay } from './components/RiceScoreDisplay';
 
 function App() {
   const [submittedComplaint, setSubmittedComplaint] = useState<string | null>(null);
@@ -29,6 +30,16 @@ function App() {
                 'System validates feedback input.',
                 'Issue is processed and structured into actionable PM artifacts.',
               ],
+            }}
+          />
+          <RiceScoreDisplay
+            riceScore={{
+              reach: 5000,
+              impact: 2.0,
+              confidence: 80,
+              effort: 1.0,
+              score: 8.0,
+              reasoning: `Reach: 5,000 monthly active users impacted by "${submittedComplaint}". Impact: 2.0 (High conversion risk). Confidence: 80% based on support ticket frequency. Effort: 1 person-week to deploy fix.`,
             }}
           />
         </div>
