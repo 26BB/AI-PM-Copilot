@@ -133,4 +133,26 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('[OKTA-IDENTITY] Users fail to sign in via OKTA widget after update.');
     expect(route).toBe('sso');
   });
+
+  /**
+   * Real-World Scenario: Near-Zero Fractional Effort Safeguard
+   * When a PM inputs a near-zero fractional effort value (e.g. 0.1 engineer-weeks),
+   * the algorithm must clamp effort to the minimum safe effort floor (0.5) to prevent
+   * score explosion due to division by near-zero decimals.
+   */
+  it('clamps near-zero fractional effort to safe effort floor', () => {
+    const score = calculateRiceScore(2500, 2.0, 100, 0.1);
+    expect(score).toBe(10);
+  });
+
+  /**
+   * Real-World Scenario: Financial Feedback with Currency Symbols and Tax Keyword Formatting
+   * Support tickets for pricing adjustments or tax queries often include currency formatting
+   * and mixed-casing (e.g. "$500 TAX charge on annual pricing tier").
+   * The router must normalize the string and route the complaint to billing.
+   */
+  it('routes financial complaints with currency symbols and tax keywords to billing', () => {
+    const route = routeHeuristicComplaint('Discrepancy found: $500 TAX charge listed under our annual PRICING plan.');
+    expect(route).toBe('billing');
+  });
 });
