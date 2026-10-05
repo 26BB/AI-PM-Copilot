@@ -17,3 +17,4 @@ Thumbs.db
 # Vercel
 .vercel
 vite_output.log
+dev_server.log

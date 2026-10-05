@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { ComplaintForm } from './components/ComplaintForm';
 import { PrdSkeletonDisplay } from './components/PrdSkeletonDisplay';
 import { RiceScoreDisplay } from './components/RiceScoreDisplay';
+import { AbTestDisplay } from './components/AbTestDisplay';
 
 function App() {
   const [submittedComplaint, setSubmittedComplaint] = useState<string | null>(null);
@@ -40,6 +41,14 @@ function App() {
               effort: 1.0,
               score: 8.0,
               reasoning: `Reach: 5,000 monthly active users impacted by "${submittedComplaint}". Impact: 2.0 (High conversion risk). Confidence: 80% based on support ticket frequency. Effort: 1 person-week to deploy fix.`,
+            }}
+          />
+          <AbTestDisplay
+            abTest={{
+              hypothesis: `Addressing "${submittedComplaint}" will increase task completion and user retention.`,
+              controlVariant: 'Current user workflow experience',
+              testVariant: 'Enhanced workflow resolving user complaint',
+              successMetric: 'Conversion / completion rate',
             }}
           />
         </div>
