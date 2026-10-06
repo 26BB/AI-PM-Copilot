@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { ComplaintForm } from './components/ComplaintForm';
 import { PrdSkeletonDisplay } from './components/PrdSkeletonDisplay';
 import { RiceScoreDisplay } from './components/RiceScoreDisplay';
+import { AbTestDisplay } from './components/AbTestDisplay';
 
 function App() {
   const [submittedComplaint, setSubmittedComplaint] = useState<string | null>(null);
@@ -40,6 +41,14 @@ function App() {
               effort: 1.0,
               score: 8.0,
               reasoning: `Reach: 5,000 monthly active users impacted by "${submittedComplaint}". Impact: 2.0 (High conversion risk). Confidence: 80% based on support ticket frequency. Effort: 1 person-week to deploy fix.`,
+            }}
+          />
+          <AbTestDisplay
+            abTest={{
+              hypothesis: `Deploying targeted resolution for "${submittedComplaint}" will increase feature completion and user satisfaction.`,
+              controlVariant: 'Current checkout flow without targeted issue resolution.',
+              testVariant: 'Updated flow with instant error feedback and guided resolution.',
+              successMetric: 'Checkout Completion Rate',
             }}
           />
         </div>
