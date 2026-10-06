@@ -133,4 +133,28 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('[OKTA-IDENTITY] Users fail to sign in via OKTA widget after update.');
     expect(route).toBe('sso');
   });
+
+  /**
+   * Real-World Scenario: Zero Impact or Zero Confidence Floor Clamping
+   * When a PM scores an idea with zero impact or zero confidence level,
+   * the score calculation must clamp to the baseline minimum floor of 0.1 to avoid 0 values in ranking matrices.
+   */
+  it('clamps RICE score to minimum floor when zero impact or zero confidence is provided', () => {
+    const zeroImpactScore = calculateRiceScore(5000, 0, 80, 2.0);
+    expect(zeroImpactScore).toBe(0.1);
+
+    const zeroConfScore = calculateRiceScore(5000, 2.0, 0, 2.0);
+    expect(zeroConfScore).toBe(0.1);
+  });
+
+  /**
+   * Real-World Scenario: Customer Feedback Containing URLs and Special Query Parameters
+   * End users or automated support systems submit issue descriptions containing direct links
+   * to billing portals or invoices (e.g., "https://app.com/invoice?id=123&tax=true").
+   * The router must analyze the URL path parameters and route appropriately to billing.
+   */
+  it('routes feedback containing invoice URLs and query parameters to billing', () => {
+    const route = routeHeuristicComplaint('User reported an issue visiting https://portal.company.com/billing/invoice?tax_id=9982');
+    expect(route).toBe('billing');
+  });
 });
