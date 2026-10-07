@@ -157,4 +157,32 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('User reported an issue visiting https://portal.company.com/billing/invoice?tax_id=9982');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Fractional Effort Below Minimum Floor Threshold
+   * When an engineer inputs a fractional effort estimate below 0.5 person-months (e.g. 0.1),
+   * the function should clamp effort to the minimum safe boundary (0.5) to prevent unrealistically inflated scores.
+   */
+  it('clamps fractional effort below 0.5 to minimum safe effort floor', () => {
+    const scoreWithTinyEffort = calculateRiceScore(1000, 1.0, 100, 0.1);
+    const scoreWithBaselineEffort = calculateRiceScore(1000, 1.0, 100, 0.5);
+    expect(scoreWithTinyEffort).toBe(scoreWithBaselineEffort);
+    expect(scoreWithTinyEffort).toBe(2);
+  });
+
+  /**
+   * Real-World Scenario: Automated Log Dump or JSON Payload Route Parsing
+   * Webhook integrations or crash log aggregators submit raw JSON strings as complaints
+   * containing system error details (e.g. `{"error": "SAML_RESPONSE_INVALID", "provider": "Okta"}`).
+   * The router must correctly identify SSO auth failures embedded inside JSON structures.
+   */
+  it('routes raw JSON error log payloads containing SSO authentication keywords to sso', () => {
+    const jsonComplaint = JSON.stringify({
+      status: 500,
+      code: 'AUTH_FAILED',
+      details: 'SAML response assertions failed when authenticating user via Okta domain'
+    });
+    const route = routeHeuristicComplaint(jsonComplaint);
+    expect(route).toBe('sso');
+  });
 });
