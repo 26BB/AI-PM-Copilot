@@ -1,5 +1,6 @@
 import React from 'react';
 import { AbTestSuggestion } from '../services/geminiService';
+import { CopyButton } from './CopyButton';
 
 export interface AbTestDisplayProps {
   /** A/B experiment suggestion containing hypothesis, variants, and primary success metric */
@@ -22,6 +23,20 @@ export function formatAbTestMetric(metric?: string): string {
 }
 
 /**
+ * Formats A/B test setup into plain text format suitable for copying to clipboard.
+ *
+ * @param abTest - AbTestSuggestion object
+ * @returns Formatted plain text string of A/B experiment details
+ */
+export function formatAbTestSummaryText(abTest: AbTestSuggestion): string {
+  const metric = formatAbTestMetric(abTest.successMetric);
+  return `Hypothesis: ${abTest.hypothesis || 'Implementing proposed changes will resolve customer friction.'}
+Control Variant (A): ${abTest.controlVariant || 'Current baseline experience'}
+Test Variant (B): ${abTest.testVariant || 'Proposed solution experience'}
+Primary Success Metric: ${metric}`;
+}
+
+/**
  * Renders the A/B Test Suggestion component displaying the feature hypothesis,
  * control variant, proposed test variant, and target primary success metric.
  *
@@ -30,6 +45,7 @@ export function formatAbTestMetric(metric?: string): string {
  */
 export function AbTestDisplay({ abTest, className = '' }: AbTestDisplayProps): React.JSX.Element {
   const formattedMetric = formatAbTestMetric(abTest.successMetric);
+  const copySummaryText = formatAbTestSummaryText(abTest);
 
   return (
     <section
@@ -37,8 +53,9 @@ export function AbTestDisplay({ abTest, className = '' }: AbTestDisplayProps): R
       aria-label="A/B Test Suggestion Output"
       style={{ marginTop: '20px' }}
     >
-      <header className="ab-test-header" style={{ marginBottom: '12px' }}>
-        <h3 className="ab-test-title" style={{ margin: '0 0 8px 0' }}>🧪 A/B Test Suggestion</h3>
+      <header className="ab-test-header" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 className="ab-test-title" style={{ margin: '0' }}>🧪 A/B Test Suggestion</h3>
+        <CopyButton textToCopy={copySummaryText} label="Copy A/B Test" copiedLabel="A/B Test Copied!" />
       </header>
 
       <div className="ab-test-body">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { PrdSkeleton } from '../services/geminiService';
+import { CopyButton } from './CopyButton';
 
 export interface PrdSkeletonDisplayProps {
   /** The PRD skeleton containing problem statement, persona, user story, and acceptance criteria */
@@ -27,6 +28,27 @@ export function normalizeAcceptanceCriteria(criteria?: string[]): string[] {
 }
 
 /**
+ * Formats a PRD Skeleton object into markdown text format suitable for copying to clipboard.
+ *
+ * @param prd - PrdSkeleton object
+ * @returns Formatted Markdown string of PRD content
+ */
+export function formatPrdMarkdown(prd: PrdSkeleton): string {
+  const criteria = normalizeAcceptanceCriteria(prd.acceptanceCriteria);
+  return `## Problem Statement
+${prd.problemStatement || 'Problem statement not specified.'}
+
+## User Persona
+${prd.userPersona || 'Target User'}
+
+## User Story
+${prd.userStory || 'As a user, I want features to work properly so that I can accomplish my goals.'}
+
+## Acceptance Criteria
+${criteria.map((c) => `- ${c}`).join('\n')}`;
+}
+
+/**
  * Renders the PRD Skeleton output component displaying problem statement, target persona,
  * user story, and structured acceptance criteria list.
  *
@@ -35,11 +57,13 @@ export function normalizeAcceptanceCriteria(criteria?: string[]): string[] {
  */
 export function PrdSkeletonDisplay({ prd, className = '' }: PrdSkeletonDisplayProps): React.JSX.Element {
   const criteriaList = normalizeAcceptanceCriteria(prd.acceptanceCriteria);
+  const markdownCopyText = formatPrdMarkdown(prd);
 
   return (
     <section className={`prd-skeleton-card ${className}`.trim()} aria-label="PRD Skeleton Output">
-      <header className="prd-skeleton-header">
+      <header className="prd-skeleton-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 className="prd-skeleton-title">📋 Draft PRD Skeleton</h3>
+        <CopyButton textToCopy={markdownCopyText} label="Copy PRD" copiedLabel="PRD Copied!" />
       </header>
 
       <div className="prd-skeleton-body">

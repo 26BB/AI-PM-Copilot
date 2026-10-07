@@ -1,5 +1,6 @@
 import React from 'react';
 import { RiceScoreReasoning } from '../services/geminiService';
+import { CopyButton } from './CopyButton';
 
 export interface RiceScoreDisplayProps {
   /** RICE score breakdown and step-by-step reasoning details */
@@ -52,6 +53,24 @@ export function formatRiceMetric(
 }
 
 /**
+ * Formats a RICE score breakdown into plain text suitable for copying to clipboard.
+ *
+ * @param riceScore - RiceScoreReasoning object
+ * @returns Formatted plain text string of RICE prioritization summary
+ */
+export function formatRiceSummaryText(riceScore: RiceScoreReasoning): string {
+  const tier = getPriorityTier(riceScore.score);
+  return `RICE Score: ${formatRiceMetric(riceScore.score, 'score')} (${tier})
+- Reach: ${formatRiceMetric(riceScore.reach, 'reach')}
+- Impact: ${formatRiceMetric(riceScore.impact, 'impact')}
+- Confidence: ${formatRiceMetric(riceScore.confidence, 'confidence')}
+- Effort: ${formatRiceMetric(riceScore.effort, 'effort')}
+
+Reasoning:
+${riceScore.reasoning || 'No specific reasoning provided.'}`;
+}
+
+/**
  * Renders the RICE Priority Score output component displaying calculated score,
  * priority tier badge, Reach/Impact/Confidence/Effort metrics grid, and step-by-step reasoning.
  *
@@ -61,20 +80,24 @@ export function formatRiceMetric(
 export function RiceScoreDisplay({ riceScore, className = '' }: RiceScoreDisplayProps): React.JSX.Element {
   const priorityTier = getPriorityTier(riceScore.score);
   const tierClass = priorityTier.toLowerCase().replace(' ', '-');
+  const copySummaryText = formatRiceSummaryText(riceScore);
 
   return (
     <section className={`rice-score-card ${className}`.trim()} aria-label="RICE Priority Score Output" style={{ marginTop: '20px' }}>
-      <header className="rice-score-header" style={{ marginBottom: '12px' }}>
-        <h3 className="rice-score-title" style={{ margin: '0 0 8px 0' }}>📊 RICE Priority Score & Reasoning</h3>
-        <div className="rice-badge-container" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <span className="rice-score-badge" aria-label={`RICE Score: ${riceScore.score}`} style={{ fontWeight: 'bold' }}>
-            RICE Score: {formatRiceMetric(riceScore.score, 'score')}
-          </span>
-          <span>•</span>
-          <span className={`priority-tier-badge priority-${tierClass}`} aria-label={`Priority Tier: ${priorityTier}`} style={{ fontWeight: 'bold' }}>
-            {priorityTier}
-          </span>
+      <header className="rice-score-header" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h3 className="rice-score-title" style={{ margin: '0 0 8px 0' }}>📊 RICE Priority Score & Reasoning</h3>
+          <div className="rice-badge-container" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <span className="rice-score-badge" aria-label={`RICE Score: ${riceScore.score}`} style={{ fontWeight: 'bold' }}>
+              RICE Score: {formatRiceMetric(riceScore.score, 'score')}
+            </span>
+            <span>•</span>
+            <span className={`priority-tier-badge priority-${tierClass}`} aria-label={`Priority Tier: ${priorityTier}`} style={{ fontWeight: 'bold' }}>
+              {priorityTier}
+            </span>
+          </div>
         </div>
+        <CopyButton textToCopy={copySummaryText} label="Copy RICE Score" copiedLabel="RICE Score Copied!" />
       </header>
 
       <div className="rice-score-body">
