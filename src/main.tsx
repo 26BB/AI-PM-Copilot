@@ -4,53 +4,61 @@ import { ComplaintForm } from './components/ComplaintForm';
 import { PrdSkeletonDisplay } from './components/PrdSkeletonDisplay';
 import { RiceScoreDisplay } from './components/RiceScoreDisplay';
 import { AbTestDisplay } from './components/AbTestDisplay';
+import { LoadingSpinner } from './components/LoadingSpinner';
+import { ErrorMessage } from './components/ErrorMessage';
+import { generateProductArtifacts, AnalysisResult } from './services/geminiService';
 
-function App() {
-  const [submittedComplaint, setSubmittedComplaint] = useState<string | null>(null);
+export function App(): React.JSX.Element {
+  const [complaintText, setComplaintText] = useState<string>('');
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleGenerateArtifacts = async (complaint: string): Promise<void> => {
+    setComplaintText(complaint);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await generateProductArtifacts(complaint);
+      setAnalysisResult(result);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to generate PRD artifacts from Gemini API.';
+      setError(message);
+      setAnalysisResult(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRetry = (): void => {
+    if (complaintText) {
+      void handleGenerateArtifacts(complaintText);
+    }
+  };
 
   return (
     <div style={{ maxWidth: '600px', margin: '40px auto', fontFamily: 'sans-serif' }}>
       <h1>AI-PM Copilot</h1>
       <h2>Submit Raw User Complaint</h2>
-      <ComplaintForm
-        onSubmit={(complaint) => {
-          setSubmittedComplaint(complaint);
-        }}
-      />
-      {submittedComplaint && (
+      <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
+
+      {isLoading && (
+        <LoadingSpinner message="Analyzing complaint with Gemini AI to generate PRD skeleton, RICE score, & A/B test..." />
+      )}
+
+      {error && !isLoading && (
+        <ErrorMessage error={error} onRetry={complaintText ? handleRetry : undefined} />
+      )}
+
+      {!isLoading && analysisResult && (
         <div style={{ marginTop: '20px' }}>
-          <div style={{ padding: '10px', background: '#e6fffa', border: '1px solid #319795', marginBottom: '20px' }}>
-            <strong>Submitted:</strong> {submittedComplaint}
+          <div style={{ padding: '10px', background: '#e6fffa', border: '1px solid #319795', marginBottom: '20px', borderRadius: '4px' }}>
+            <strong>Submitted Complaint:</strong> {complaintText}
           </div>
-          <PrdSkeletonDisplay
-            prd={{
-              problemStatement: submittedComplaint,
-              userPersona: 'Impacted End User',
-              userStory: `As a user, I want resolution for "${submittedComplaint}" so that I can proceed seamlessly.`,
-              acceptanceCriteria: [
-                'System validates feedback input.',
-                'Issue is processed and structured into actionable PM artifacts.',
-              ],
-            }}
-          />
-          <RiceScoreDisplay
-            riceScore={{
-              reach: 5000,
-              impact: 2.0,
-              confidence: 80,
-              effort: 1.0,
-              score: 8.0,
-              reasoning: `Reach: 5,000 monthly active users impacted by "${submittedComplaint}". Impact: 2.0 (High conversion risk). Confidence: 80% based on support ticket frequency. Effort: 1 person-week to deploy fix.`,
-            }}
-          />
-          <AbTestDisplay
-            abTest={{
-              hypothesis: `Deploying targeted resolution for "${submittedComplaint}" will increase feature completion and user satisfaction.`,
-              controlVariant: 'Current checkout flow without targeted issue resolution.',
-              testVariant: 'Updated flow with instant error feedback and guided resolution.',
-              successMetric: 'Checkout Completion Rate',
-            }}
-          />
+          <PrdSkeletonDisplay prd={analysisResult.prdSkeleton} />
+          <RiceScoreDisplay riceScore={analysisResult.riceScore} />
+          <AbTestDisplay abTest={analysisResult.abTestSuggestion} />
         </div>
       )}
     </div>
