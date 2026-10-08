@@ -57,6 +57,21 @@ export interface AnalysisResult {
 }
 
 /**
+ * Helper function to retrieve the Gemini API key safely across Node.js and Vite browser environments.
+ *
+ * @returns API key string or undefined if not set
+ */
+export function getGeminiApiKey(): string | undefined {
+  if (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) {
+    return process.env.GEMINI_API_KEY;
+  }
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) {
+    return import.meta.env.VITE_GEMINI_API_KEY;
+  }
+  return undefined;
+}
+
+/**
  * Constructs a structured system prompt for Gemini API to process raw user feedback.
  *
  * @param complaint - Raw customer feedback or complaint text
@@ -144,16 +159,16 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
 
 /**
  * Sends a raw user complaint to the Google Gemini API and returns structured PM artifacts.
- * Key strictly read from process.env.GEMINI_API_KEY as per coding standards.
+ * Key strictly read from environment variable via getGeminiApiKey().
  *
  * @param complaint - Raw user feedback string
  * @returns Promise resolving to AnalysisResult containing PRD, RICE, and A/B test specifications
  */
 export async function generateProductArtifacts(complaint: string): Promise<AnalysisResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
-    throw new Error('Missing process.env.GEMINI_API_KEY. Please set the environment variable.');
+    throw new Error('Missing Gemini API Key. Please set GEMINI_API_KEY or VITE_GEMINI_API_KEY environment variable.');
   }
 
   const prompt = buildGeminiPrompt(complaint);
