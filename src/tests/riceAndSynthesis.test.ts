@@ -157,4 +157,38 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('User reported an issue visiting https://portal.company.com/billing/invoice?tax_id=9982');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Micro-Effort Estimates Clamping
+   * When a PM enters a non-zero effort estimation below the minimum threshold (e.g. 0.1 person-weeks),
+   * safeEffort should clamp the effort to 0.5 to prevent unreasonably inflated RICE scores.
+   */
+  it('clamps effort below 0.5 to the minimum safe effort value of 0.5', () => {
+    const microEffortScore = calculateRiceScore(1000, 2.0, 80, 0.1);
+    const standardMinEffortScore = calculateRiceScore(1000, 2.0, 80, 0.5);
+    expect(microEffortScore).toEqual(standardMinEffortScore);
+    expect(microEffortScore).toBe(3.2);
+  });
+
+  /**
+   * Real-World Scenario: Support Ticket Subject Lines with Prefixes and Punctuation
+   * Automated support desk integrations often prefix complaints with ticket tags (e.g., "[TICKET-9921] Urgent: Incorrect PRICE calculated on renewal").
+   * The heuristic router must recognize keywords inside formatted ticket headers and route to billing.
+   */
+  it('routes formatted support ticket headers with tags to billing', () => {
+    const route = routeHeuristicComplaint('[TICKET-9921] Urgent: Incorrect PRICE calculated on renewal');
+    expect(route).toBe('billing');
+  });
+
+  /**
+   * Real-World Scenario: Empty or Whitespace-Only Complaint Submission
+   * When a user accidentally submits blank text or whitespace in the complaint box,
+   * the router should handle the edge case gracefully without throwing errors and default to 'otp'.
+   */
+  it('defaults to otp when complaint is empty or whitespace-only', () => {
+    const routeEmpty = routeHeuristicComplaint('');
+    const routeSpaces = routeHeuristicComplaint('   \n\t  ');
+    expect(routeEmpty).toBe('otp');
+    expect(routeSpaces).toBe('otp');
+  });
 });
