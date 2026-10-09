@@ -32,6 +32,19 @@ describe('Gemini API Integration Service', () => {
   });
 
   /**
+   * Real-world scenario: PM specifies a feedback source channel tag (e.g. 'App Store') along with complaint.
+   * Expectation: Prompt includes feedback source channel header to provide Gemini with source context.
+   */
+  it('includes feedback source channel tag in Gemini prompt when provided', () => {
+    const rawComplaint = 'App crashes when opening cart page on iOS 18.';
+    const prompt = buildGeminiPrompt(rawComplaint, 'App Store');
+
+    expect(prompt).toContain(rawComplaint);
+    expect(prompt).toContain('FEEDBACK SOURCE CHANNEL: App Store');
+    expect(prompt).toContain('App Store');
+  });
+
+  /**
    * Real-world scenario: Gemini API returns output wrapped in markdown code blocks or clean JSON string.
    * Expectation: Response parser strips markdown formatting and populates structured PM artifact objects.
    */
