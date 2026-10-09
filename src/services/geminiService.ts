@@ -65,8 +65,9 @@ export function getGeminiApiKey(): string | undefined {
   if (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) {
     return process.env.GEMINI_API_KEY;
   }
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) {
-    return import.meta.env.VITE_GEMINI_API_KEY;
+  const meta = import.meta as unknown as { env?: Record<string, string | undefined> };
+  if (meta && meta.env && meta.env.VITE_GEMINI_API_KEY) {
+    return meta.env.VITE_GEMINI_API_KEY;
   }
   return undefined;
 }
@@ -75,11 +76,13 @@ export function getGeminiApiKey(): string | undefined {
  * Constructs a structured system prompt for Gemini API to process raw user feedback.
  *
  * @param complaint - Raw customer feedback or complaint text
+ * @param sourceTag - Optional feedback source channel (e.g. 'App Store', 'Support Ticket')
  * @returns Formatted prompt requiring JSON output matching expected product artifact schema
  */
-export function buildGeminiPrompt(complaint: string): string {
-  return `You are an expert Principal Product Manager. Analyze the following raw user complaint and generate structured product artifacts:
-
+export function buildGeminiPrompt(complaint: string, sourceTag?: string | null): string {
+  const sourceContext = sourceTag ? `\nFEEDBACK SOURCE CHANNEL: ${sourceTag}\n` : '';
+  return `You are an expert Principal Product Manager. Analyze the following raw user complaint${sourceTag ? ` from ${sourceTag}` : ''} and generate structured product artifacts:
+${sourceContext}
 RAW USER COMPLAINT:
 "${complaint}"
 
@@ -162,16 +165,20 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
  * Key strictly read from environment variable via getGeminiApiKey().
  *
  * @param complaint - Raw user feedback string
+ * @param sourceTag - Optional feedback source channel context
  * @returns Promise resolving to AnalysisResult containing PRD, RICE, and A/B test specifications
  */
-export async function generateProductArtifacts(complaint: string): Promise<AnalysisResult> {
+export async function generateProductArtifacts(
+  complaint: string,
+  sourceTag?: string | null
+): Promise<AnalysisResult> {
   const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
-    throw new Error('Missing Gemini API Key. Please set GEMINI_API_KEY or VITE_GEMINI_API_KEY environment variable.');
+    throw new Error('Missing process.env.GEMINI_API_KEY. Please set the environment variable.');
   }
 
-  const prompt = buildGeminiPrompt(complaint);
+  const prompt = buildGeminiPrompt(complaint, sourceTag);
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const response = await fetch(url, {

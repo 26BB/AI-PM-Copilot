@@ -77,7 +77,28 @@ describe('ComplaintForm Component', () => {
     fireEvent.submit(form);
 
     expect(handleSubmit).toHaveBeenCalledTimes(1);
-    expect(handleSubmit).toHaveBeenCalledWith('Users cannot complete SAML SSO login on Safari');
+    expect(handleSubmit).toHaveBeenCalledWith('Users cannot complete SAML SSO login on Safari', null);
+  });
+
+  /**
+   * Real-world scenario: PM selects a source tag ('App Store') and submits a complaint.
+   * Expectation: onSubmit callback is invoked with complaint text and selected source tag.
+   */
+  it('submits selected source tag along with complaint text', () => {
+    const handleSubmit = vi.fn();
+    render(<ComplaintForm onSubmit={handleSubmit} />);
+
+    const appStorePill = screen.getByRole('button', { name: /App Store/i });
+    fireEvent.click(appStorePill);
+
+    const textarea = screen.getByRole('textbox', { name: /raw user complaint/i });
+    fireEvent.change(textarea, { target: { value: 'App crashes when purchasing subscription on iOS.' } });
+
+    const form = screen.getByRole('form', { name: /complaint input form/i });
+    fireEvent.submit(form);
+
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
+    expect(handleSubmit).toHaveBeenCalledWith('App crashes when purchasing subscription on iOS.', 'App Store');
   });
 
   /**
