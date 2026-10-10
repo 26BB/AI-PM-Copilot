@@ -168,7 +168,7 @@ export async function generateProductArtifacts(complaint: string): Promise<Analy
   const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
-    throw new Error('Missing Gemini API Key. Please set GEMINI_API_KEY or VITE_GEMINI_API_KEY environment variable.');
+    throw new Error('Missing process.env.GEMINI_API_KEY. Please set the environment variable.');
   }
 
   const prompt = buildGeminiPrompt(complaint);
