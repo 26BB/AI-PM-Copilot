@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { SourceTagSelector, SourceTag } from './SourceTagSelector';
 
 export interface ComplaintValidationResult {
   isValid: boolean;
@@ -7,13 +8,15 @@ export interface ComplaintValidationResult {
 
 export interface ComplaintFormProps {
   /** Callback fired when a valid raw complaint is submitted */
-  onSubmit: (complaint: string) => void | Promise<void>;
+  onSubmit: (complaint: string, sourceTag?: SourceTag) => void | Promise<void>;
   /** Indicates if the AI analysis or request is currently loading */
   isLoading?: boolean;
   /** Custom placeholder text for the complaint textarea */
   placeholder?: string;
   /** Initial text value for the complaint input */
   initialValue?: string;
+  /** Initial selected feedback source channel tag */
+  initialSourceTag?: SourceTag;
   /** Disables the input form when true */
   disabled?: boolean;
 }
@@ -54,9 +57,11 @@ export function ComplaintForm({
   isLoading = false,
   placeholder = 'Paste user complaint, feedback, or app review here (e.g. "Checkout verification failed during flash sale")...',
   initialValue = '',
+  initialSourceTag = 'App Store',
   disabled = false,
 }: ComplaintFormProps): React.JSX.Element {
   const [complaintText, setComplaintText] = useState<string>(initialValue);
+  const [selectedTag, setSelectedTag] = useState<SourceTag>(initialSourceTag);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>): void => {
@@ -75,11 +80,16 @@ export function ComplaintForm({
     }
 
     setValidationError(null);
-    void onSubmit(complaintText.trim());
+    void onSubmit(complaintText.trim(), selectedTag);
   };
 
   return (
     <form onSubmit={handleSubmit} className="complaint-form" aria-label="Complaint Input Form">
+      <SourceTagSelector
+        selectedTag={selectedTag}
+        onSelectTag={setSelectedTag}
+        disabled={disabled || isLoading}
+      />
       <div className="form-group">
         <label htmlFor="complaint-input" className="form-label">
           Raw User Complaint or Feedback
