@@ -77,7 +77,7 @@ describe('ComplaintForm Component', () => {
     fireEvent.submit(form);
 
     expect(handleSubmit).toHaveBeenCalledTimes(1);
-    expect(handleSubmit).toHaveBeenCalledWith('Users cannot complete SAML SSO login on Safari');
+    expect(handleSubmit).toHaveBeenCalledWith('Users cannot complete SAML SSO login on Safari', 'App Store');
   });
 
   /**

@@ -14,8 +14,13 @@ export function App(): React.JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerateArtifacts = async (complaint: string): Promise<void> => {
+  const [selectedSourceTag, setSelectedSourceTag] = useState<string>('App Store');
+
+  const handleGenerateArtifacts = async (complaint: string, sourceTag?: string): Promise<void> => {
     setComplaintText(complaint);
+    if (sourceTag) {
+      setSelectedSourceTag(sourceTag);
+    }
     setIsLoading(true);
     setError(null);
 
@@ -54,6 +59,7 @@ export function App(): React.JSX.Element {
       {!isLoading && analysisResult && (
         <div style={{ marginTop: '20px' }}>
           <div style={{ padding: '10px', background: '#e6fffa', border: '1px solid #319795', marginBottom: '20px', borderRadius: '4px' }}>
+            <strong>Source Channel:</strong> {selectedSourceTag}<br />
             <strong>Submitted Complaint:</strong> {complaintText}
           </div>
           <PrdSkeletonDisplay prd={analysisResult.prdSkeleton} />

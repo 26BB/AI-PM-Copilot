@@ -57,16 +57,13 @@ export interface AnalysisResult {
 }
 
 /**
- * Helper function to retrieve the Gemini API key safely across Node.js and Vite browser environments.
+ * Helper function to retrieve the Gemini API key strictly from environment variables.
  *
  * @returns API key string or undefined if not set
  */
 export function getGeminiApiKey(): string | undefined {
   if (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) {
     return process.env.GEMINI_API_KEY;
-  }
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) {
-    return import.meta.env.VITE_GEMINI_API_KEY;
   }
   return undefined;
 }
@@ -168,7 +165,7 @@ export async function generateProductArtifacts(complaint: string): Promise<Analy
   const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
-    throw new Error('Missing Gemini API Key. Please set GEMINI_API_KEY or VITE_GEMINI_API_KEY environment variable.');
+    throw new Error('Missing process.env.GEMINI_API_KEY. Please set the environment variable.');
   }
 
   const prompt = buildGeminiPrompt(complaint);
