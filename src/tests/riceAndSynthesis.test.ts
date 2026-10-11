@@ -157,4 +157,27 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('User reported an issue visiting https://portal.company.com/billing/invoice?tax_id=9982');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Fractional Micro-Task Effort Estimates
+   * When PMs estimate very small tasks with sub-0.5 effort values (e.g. 0.1 person-months),
+   * the algorithm must clamp effort to the 0.5 minimum floor to prevent unnaturally inflated RICE scores.
+   */
+  it('clamps fractional effort estimates below 0.5 to minimum effort threshold', () => {
+    const microEffortScore = calculateRiceScore(10000, 2.0, 80, 0.1);
+    const expectedScore = calculateRiceScore(10000, 2.0, 80, 0.5);
+    expect(microEffortScore).toBe(expectedScore);
+    expect(microEffortScore).toBe(32);
+  });
+
+  /**
+   * Real-World Scenario: Mixed-Case Complaint with Punctuation, Numbers and Symbols
+   * User complaints submitted via support tickets often contain pricing queries mixed with invoice numbers,
+   * currency symbols, and exclamation marks (e.g., "NEED Urgent PRICE adjustment & TAX update on RECURRING-INVOICE #99!!").
+   * The heuristic router must reliably categorize these edge cases into billing.
+   */
+  it('routes mixed-case complaints with numbers, currency symbols, and hyphens to billing', () => {
+    const route = routeHeuristicComplaint('NEED Urgent PRICE adjustment & TAX update on RECURRING-INVOICE #99!!');
+    expect(route).toBe('billing');
+  });
 });
