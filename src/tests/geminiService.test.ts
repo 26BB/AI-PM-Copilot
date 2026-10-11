@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
+  formatSourceContextPrompt,
   buildGeminiPrompt,
   parseGeminiResponse,
   generateProductArtifacts,
@@ -18,14 +19,26 @@ describe('Gemini API Integration Service', () => {
   });
 
   /**
-   * Real-world scenario: PM inputs a raw user complaint into the Copilot.
-   * Expectation: Prompt builder formats the user complaint with explicit structured JSON guidelines.
+   * Real-world scenario: PM selects feedback origin channel or leaves it unassigned.
+   * Expectation: Helper formats prompt header with selected channel name or default fallback.
    */
-  it('builds a structured Gemini prompt including raw complaint text', () => {
+  it('formats feedback source channel context line appropriately', () => {
+    expect(formatSourceContextPrompt('App Store')).toBe('FEEDBACK SOURCE CHANNEL: App Store');
+    expect(formatSourceContextPrompt('  Google Play  ')).toBe('FEEDBACK SOURCE CHANNEL: Google Play');
+    expect(formatSourceContextPrompt('')).toBe('FEEDBACK SOURCE CHANNEL: Unspecified Channel');
+    expect(formatSourceContextPrompt(undefined)).toBe('FEEDBACK SOURCE CHANNEL: Unspecified Channel');
+  });
+
+  /**
+   * Real-world scenario: PM inputs a raw user complaint into the Copilot along with source tag context.
+   * Expectation: Prompt builder formats the user complaint with source channel context and explicit structured JSON guidelines.
+   */
+  it('builds a structured Gemini prompt including raw complaint text and source channel context', () => {
     const rawComplaint = 'Checkout verification failed during flash sale due to OTP timeout.';
-    const prompt = buildGeminiPrompt(rawComplaint);
+    const prompt = buildGeminiPrompt(rawComplaint, 'App Store');
 
     expect(prompt).toContain(rawComplaint);
+    expect(prompt).toContain('FEEDBACK SOURCE CHANNEL: App Store');
     expect(prompt).toContain('prdSkeleton');
     expect(prompt).toContain('riceScore');
     expect(prompt).toContain('abTestSuggestion');
@@ -124,12 +137,17 @@ describe('Gemini API Integration Service', () => {
       json: async () => mockApiResponse,
     } as Response);
 
-    const result = await generateProductArtifacts('Users cannot complete SAML SSO login on Safari');
+    const result = await generateProductArtifacts('Users cannot complete SAML SSO login on Safari', 'Twitter / X');
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const calledUrl = fetchSpy.mock.calls[0][0] as string;
     expect(calledUrl).toContain('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent');
     expect(calledUrl).toContain('key=test-gemini-api-key');
+
+    const calledBody = JSON.parse(fetchSpy.mock.calls[0][1]?.body as string) as {
+      contents: Array<{ parts: Array<{ text: string }> }>;
+    };
+    expect(calledBody.contents[0].parts[0].text).toContain('FEEDBACK SOURCE CHANNEL: Twitter / X');
 
     expect(result.prdSkeleton.userPersona).toBe('Enterprise Admin');
     expect(result.riceScore.score).toBe(3.2);

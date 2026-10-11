@@ -69,13 +69,30 @@ export function getGeminiApiKey(): string | undefined {
 }
 
 /**
+ * Formats customer feedback source channel context into a structured prompt line.
+ *
+ * @param sourceTag - Selected feedback channel source tag (e.g., "App Store", "Twitter / X")
+ * @returns Formatted prompt string indicating feedback origin channel
+ */
+export function formatSourceContextPrompt(sourceTag?: string): string {
+  if (sourceTag && sourceTag.trim()) {
+    return `FEEDBACK SOURCE CHANNEL: ${sourceTag.trim()}`;
+  }
+  return 'FEEDBACK SOURCE CHANNEL: Unspecified Channel';
+}
+
+/**
  * Constructs a structured system prompt for Gemini API to process raw user feedback.
  *
  * @param complaint - Raw customer feedback or complaint text
+ * @param sourceTag - Optional source channel tag indicating feedback origin
  * @returns Formatted prompt requiring JSON output matching expected product artifact schema
  */
-export function buildGeminiPrompt(complaint: string): string {
+export function buildGeminiPrompt(complaint: string, sourceTag?: string): string {
+  const sourceContext = formatSourceContextPrompt(sourceTag);
   return `You are an expert Principal Product Manager. Analyze the following raw user complaint and generate structured product artifacts:
+
+${sourceContext}
 
 RAW USER COMPLAINT:
 "${complaint}"
@@ -159,16 +176,17 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
  * Key strictly read from environment variable via getGeminiApiKey().
  *
  * @param complaint - Raw user feedback string
+ * @param sourceTag - Optional customer feedback channel tag context
  * @returns Promise resolving to AnalysisResult containing PRD, RICE, and A/B test specifications
  */
-export async function generateProductArtifacts(complaint: string): Promise<AnalysisResult> {
+export async function generateProductArtifacts(complaint: string, sourceTag?: string): Promise<AnalysisResult> {
   const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
     throw new Error('Missing process.env.GEMINI_API_KEY. Please set the environment variable.');
   }
 
-  const prompt = buildGeminiPrompt(complaint);
+  const prompt = buildGeminiPrompt(complaint, sourceTag);
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const response = await fetch(url, {
