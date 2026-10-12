@@ -157,4 +157,34 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('User reported an issue visiting https://portal.company.com/billing/invoice?tax_id=9982');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Sub-Day or Fractional Effort Estimate Clamping
+   * When a PM inputs a small sub-day effort estimate (e.g., 0.1 person-weeks for a minor copy change),
+   * the calculation clamps effort to a minimum floor of 0.5 to prevent unreasonably inflated RICE scores.
+   */
+  it('clamps fractional effort inputs below 0.5 to the minimum effort floor', () => {
+    const score = calculateRiceScore(2000, 1.0, 100, 0.1);
+    expect(score).toBe(4.0);
+  });
+
+  /**
+   * Real-World Scenario: Multi-Keyword Precedence with Billing Keywords Appearing First
+   * In support complaints where pricing or invoicing issues lead to authentication lockouts (e.g., "PRICE plan upgrade broke SAML SSO logins"),
+   * enterprise identity routing ('sso') must take priority over billing fallback regardless of keyword order.
+   */
+  it('prioritizes enterprise identity routing when billing keyword appears before SSO keyword', () => {
+    const route = routeHeuristicComplaint('The new PRICE tier broke our SAML SSO login integration');
+    expect(route).toBe('sso');
+  });
+
+  /**
+   * Real-World Scenario: Raw Support Complaints with Currency Symbols and Numbers
+   * End users frequently submit bug reports containing currency symbols, numeric amounts, and capitalized billing keywords
+   * (e.g., "CHARGED $1,250.00 ON INVOICE WITH TAX ERROR!"). The router must parse keywords accurately and route to billing.
+   */
+  it('routes feedback with currency symbols and capitalized keywords to billing', () => {
+    const route = routeHeuristicComplaint('CHARGED $1,250.00 ON INVOICE WITH TAX ERROR!');
+    expect(route).toBe('billing');
+  });
 });
