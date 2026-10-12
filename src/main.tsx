@@ -18,6 +18,7 @@ export function App(): React.JSX.Element {
 
   const handleGenerateArtifacts = async (complaint: string, sourceTag?: string): Promise<void> => {
     setComplaintText(complaint);
+    const activeTag = sourceTag || selectedSourceTag;
     if (sourceTag) {
       setSelectedSourceTag(sourceTag);
     }
@@ -25,7 +26,7 @@ export function App(): React.JSX.Element {
     setError(null);
 
     try {
-      const result = await generateProductArtifacts(complaint);
+      const result = await generateProductArtifacts(complaint, activeTag);
       setAnalysisResult(result);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to generate PRD artifacts from Gemini API.';
@@ -43,7 +44,7 @@ export function App(): React.JSX.Element {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '40px auto', fontFamily: 'sans-serif' }}>
+    <div style={{ maxWidth: '600px', width: '90%', margin: '20px auto', fontFamily: 'sans-serif', padding: '0 10px', boxSizing: 'border-box' }}>
       <h1>AI-PM Copilot</h1>
       <h2>Submit Raw User Complaint</h2>
       <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
