@@ -3,13 +3,15 @@
 ### Paste a user complaint. Get a PRD draft, RICE score, and A/B test — in seconds.
 
 > **Built by Bhushan Bhosale** (APM Portfolio Project | Pune, India)  
-> 🌐 **Live Demo:** *(Coming soon — Vercel deploy after build)*  
+> 🌐 **Live Demo:** [**https://ai-pm-copilot-two.vercel.app**](https://ai-pm-copilot-two.vercel.app)  
 > 📚 **Full Docs:** [`/docs` Directory](./docs)
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-success?style=for-the-badge&logo=vercel)](https://ai-pm-copilot-two.vercel.app)
+[![Status](https://img.shields.io/badge/Status-Live_in_Production-brightgreen?style=for-the-badge)](https://ai-pm-copilot-two.vercel.app)
+[![Tests](https://img.shields.io/badge/Tests-62_Passed-success?style=for-the-badge&logo=vitest)](https://github.com/26BB/AI-PM-Copilot)
 [![PRD](https://img.shields.io/badge/PRD-Read-blue?style=for-the-badge)](./docs/PRD.md)
 [![Architecture](https://img.shields.io/badge/Architecture-Read-green?style=for-the-badge)](./docs/ARCHITECTURE.md)
 [![GTM](https://img.shields.io/badge/GTM_Strategy-Read-orange?style=for-the-badge)](./docs/GTM-STRATEGY.md)
-[![Status](https://img.shields.io/badge/Status-Building-yellow?style=for-the-badge)](./docs/ROADMAP.md)
 
 ---
 
@@ -25,10 +27,19 @@
 ### The Solution
 Paste any user complaint → AI generates:
 1. 📋 **PRD Skeleton** — Problem statement, user persona, user story, acceptance criteria
-2. 📊 **RICE Priority Score** — Reach, Impact, Confidence, Effort auto-estimated with reasoning
+2. 📊 **RICE Priority Score** — Reach, Impact, Confidence, Effort auto-estimated with step-by-step reasoning
 3. 🧪 **A/B Test Suggestion** — Hypothesis, control variant, test variant, success metric
 
 ---
+
+## ✨ Key Features & Capabilities
+
+- **🚀 Instant Artifact Generation:** Generates actionable PM deliverables in seconds using Google Gemini AI.
+- **🏷️ Source Channel Selector:** Tag feedback from App Store, Google Play, Twitter / X, Zendesk, or G2 to provide the AI with channel-specific user context.
+- **📐 Mathematical RICE Scoring:** Transparent priority formula (`(Reach × Impact × Confidence) / Effort`) with clear justification for every variable.
+- **📋 1-Click Copy Actions:** Dedicated copy buttons on every section to swiftly transfer artifacts to Notion, Linear, or Jira.
+- **🛡️ Resilient Error Handling & Retry:** Graceful loading states, network timeout recovery, and one-click retry mechanisms.
+- **✅ High Reliability Test Suite:** Backed by 62 unit and integration tests with 100% passing rate and 70%+ line coverage.
 
 ## 🛠️ Tech Stack
 
