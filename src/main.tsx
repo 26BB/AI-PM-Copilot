@@ -6,6 +6,7 @@ import { RiceScoreDisplay } from './components/RiceScoreDisplay';
 import { AbTestDisplay } from './components/AbTestDisplay';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { ErrorMessage } from './components/ErrorMessage';
+import { ResponsiveContainer } from './components/ResponsiveContainer';
 import { generateProductArtifacts, AnalysisResult } from './services/geminiService';
 
 export function App(): React.JSX.Element {
@@ -44,31 +45,33 @@ export function App(): React.JSX.Element {
   };
 
   return (
-    <div style={{ maxWidth: '600px', width: '90%', margin: '20px auto', fontFamily: 'sans-serif', padding: '0 10px', boxSizing: 'border-box' }}>
-      <h1>AI-PM Copilot</h1>
-      <h2>Submit Raw User Complaint</h2>
-      <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
+    <ResponsiveContainer maxWidth="600px">
+      <div style={{ fontFamily: 'sans-serif' }}>
+        <h1>AI-PM Copilot</h1>
+        <h2>Submit Raw User Complaint</h2>
+        <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
 
-      {isLoading && (
-        <LoadingSpinner message="Analyzing complaint with Gemini AI to generate PRD skeleton, RICE score, & A/B test..." />
-      )}
+        {isLoading && (
+          <LoadingSpinner message="Analyzing complaint with Gemini AI to generate PRD skeleton, RICE score, & A/B test..." />
+        )}
 
-      {error && !isLoading && (
-        <ErrorMessage error={error} onRetry={complaintText ? handleRetry : undefined} />
-      )}
+        {error && !isLoading && (
+          <ErrorMessage error={error} onRetry={complaintText ? handleRetry : undefined} />
+        )}
 
-      {!isLoading && analysisResult && (
-        <div style={{ marginTop: '20px' }}>
-          <div style={{ padding: '10px', background: '#e6fffa', border: '1px solid #319795', marginBottom: '20px', borderRadius: '4px' }}>
-            <strong>Source Channel:</strong> {selectedSourceTag}<br />
-            <strong>Submitted Complaint:</strong> {complaintText}
+        {!isLoading && analysisResult && (
+          <div style={{ marginTop: '20px' }}>
+            <div style={{ padding: '10px', background: '#e6fffa', border: '1px solid #319795', marginBottom: '20px', borderRadius: '4px' }}>
+              <strong>Source Channel:</strong> {selectedSourceTag}<br />
+              <strong>Submitted Complaint:</strong> {complaintText}
+            </div>
+            <PrdSkeletonDisplay prd={analysisResult.prdSkeleton} />
+            <RiceScoreDisplay riceScore={analysisResult.riceScore} />
+            <AbTestDisplay abTest={analysisResult.abTestSuggestion} />
           </div>
-          <PrdSkeletonDisplay prd={analysisResult.prdSkeleton} />
-          <RiceScoreDisplay riceScore={analysisResult.riceScore} />
-          <AbTestDisplay abTest={analysisResult.abTestSuggestion} />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </ResponsiveContainer>
   );
 }
 
