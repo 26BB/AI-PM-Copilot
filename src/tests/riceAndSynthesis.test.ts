@@ -187,4 +187,25 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('CHARGED $1,250.00 ON INVOICE WITH TAX ERROR!');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: URL Query Parameters and Encoded Billing Tokens in Webhook Payloads
+   * Automated webhook complaints or user ticket descriptions often include direct URL links with embedded parameters
+   * like "invoice_id=9901&tax_exempt=true". The router must handle URL-encoded characters and parameter strings accurately.
+   */
+  it('routes webhook feedback with URL parameters containing tax and invoice flags to billing', () => {
+    const route = routeHeuristicComplaint('Webhook notification failed for event https://api.billing.com/v1/tax%20adjustment?invoice_id=INV-9021');
+    expect(route).toBe('billing');
+  });
+
+  /**
+   * Real-World Scenario: Scale Growth Evaluation with Over-100 Confidence and Fractional Metrics
+   * When evaluating high-growth features with large reach (e.g., 250,000 users), fractional impact (1.5), confidence over 100% (150%),
+   * and high effort (10.0), the formula must scale predictably and produce an exact, properly rounded score.
+   */
+  it('calculates expected score for large reach, high confidence (>100%), and fractional impact', () => {
+    const score = calculateRiceScore(250000, 1.5, 150, 10.0);
+    expect(score).toBe(56.3);
+    expect(Number.isFinite(score)).toBe(true);
+  });
 });
