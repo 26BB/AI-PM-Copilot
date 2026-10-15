@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ComplaintForm } from './components/ComplaintForm';
+import { SourceTag } from './components/SourceTagSelector';
 import { PrdSkeletonDisplay } from './components/PrdSkeletonDisplay';
 import { RiceScoreDisplay } from './components/RiceScoreDisplay';
 import { AbTestDisplay } from './components/AbTestDisplay';
@@ -47,7 +48,11 @@ export function App(): React.JSX.Element {
     <div style={{ maxWidth: '600px', width: '90%', margin: '20px auto', fontFamily: 'sans-serif', padding: '0 10px', boxSizing: 'border-box' }}>
       <h1>AI-PM Copilot</h1>
       <h2>Submit Raw User Complaint</h2>
-      <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
+      <ComplaintForm
+        onSubmit={handleGenerateArtifacts}
+        isLoading={isLoading}
+        initialSourceTag={selectedSourceTag as SourceTag}
+      />
 
       {isLoading && (
         <LoadingSpinner message="Analyzing complaint with Gemini AI to generate PRD skeleton, RICE score, & A/B test..." />
@@ -72,8 +77,11 @@ export function App(): React.JSX.Element {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
