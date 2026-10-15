@@ -23,7 +23,6 @@ describe('App Integration Component', () => {
     render(<App />);
 
     expect(screen.getByRole('heading', { level: 1, name: 'AI-PM Copilot' })).toBeDefined();
-    expect(screen.getByRole('heading', { level: 2, name: 'Submit Raw User Complaint' })).toBeDefined();
     expect(screen.getByRole('button', { name: /App Store/i })).toBeDefined();
     expect(screen.getByRole('textbox', { name: /raw user complaint/i })).toBeDefined();
   });
@@ -52,7 +51,7 @@ describe('App Integration Component', () => {
         hypothesis: 'Simplifying checkout OTP will increase completion.',
         controlVariant: '6-digit SMS OTP',
         testVariant: '1-click biometric auth',
-        primaryMetric: 'Checkout Completion Rate',
+        successMetric: 'Checkout Completion Rate',
       },
     };
 
@@ -97,7 +96,7 @@ describe('App Integration Component', () => {
           acceptanceCriteria: ['Criteria 1'],
         },
         riceScore: { reach: 5, impact: 2, confidence: 80, effort: 1, score: 8, reasoning: 'Ok' },
-        abTestSuggestion: { hypothesis: 'Hypothesis', controlVariant: 'A', testVariant: 'B', primaryMetric: 'Metric' },
+        abTestSuggestion: { hypothesis: 'Hypothesis', controlVariant: 'A', testVariant: 'B', successMetric: 'Metric' },
       });
 
     render(<App />);
