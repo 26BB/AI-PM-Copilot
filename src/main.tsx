@@ -45,38 +45,72 @@ export function App(): React.JSX.Element {
   };
 
   return (
-    <ResponsiveContainer maxWidth="600px">
-      <div style={{ fontFamily: 'sans-serif' }}>
-        <h1>AI-PM Copilot</h1>
-        <h2>Submit Raw User Complaint</h2>
-        <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
+    <ResponsiveContainer maxWidth="720px">
+      <div
+        className="app-container"
+        style={{
+          width: '100%',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+          boxSizing: 'border-box',
+        }}
+      >
+        <header className="app-header" style={{ marginBottom: '20px', textAlign: 'left' }}>
+          <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.25rem)', margin: '0 0 8px 0', color: '#1a202c' }}>
+            AI-PM Copilot
+          </h1>
+          <p style={{ margin: 0, fontSize: '0.95rem', color: '#4a5568' }}>
+            Paste a raw user complaint to generate a PRD skeleton, RICE priority score, and A/B test suggestion in seconds.
+          </p>
+        </header>
 
-        {isLoading && (
-          <LoadingSpinner message="Analyzing complaint with Gemini AI to generate PRD skeleton, RICE score, & A/B test..." />
-        )}
+        <main className="app-main">
+          <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
 
-        {error && !isLoading && (
-          <ErrorMessage error={error} onRetry={complaintText ? handleRetry : undefined} />
-        )}
+          {isLoading && (
+            <LoadingSpinner message="Analyzing complaint with Gemini AI to generate PRD skeleton, RICE score, & A/B test..." />
+          )}
 
-        {!isLoading && analysisResult && (
-          <div style={{ marginTop: '20px' }}>
-            <div style={{ padding: '10px', background: '#e6fffa', border: '1px solid #319795', marginBottom: '20px', borderRadius: '4px' }}>
-              <strong>Source Channel:</strong> {selectedSourceTag}<br />
-              <strong>Submitted Complaint:</strong> {complaintText}
+          {error && !isLoading && (
+            <ErrorMessage error={error} onRetry={complaintText ? handleRetry : undefined} />
+          )}
+
+          {!isLoading && analysisResult && (
+            <div className="analysis-results-container" style={{ marginTop: '24px' }}>
+              <div
+                className="submitted-context-banner"
+                style={{
+                  padding: '12px 16px',
+                  background: '#e6fffa',
+                  border: '1px solid #319795',
+                  marginBottom: '20px',
+                  borderRadius: '8px',
+                  wordBreak: 'break-word',
+                  fontSize: '0.9rem',
+                }}
+              >
+                <div style={{ marginBottom: '4px' }}>
+                  <strong>Source Channel:</strong> {selectedSourceTag}
+                </div>
+                <div>
+                  <strong>Submitted Complaint:</strong> {complaintText}
+                </div>
+              </div>
+              <PrdSkeletonDisplay prd={analysisResult.prdSkeleton} />
+              <RiceScoreDisplay riceScore={analysisResult.riceScore} />
+              <AbTestDisplay abTest={analysisResult.abTestSuggestion} />
             </div>
-            <PrdSkeletonDisplay prd={analysisResult.prdSkeleton} />
-            <RiceScoreDisplay riceScore={analysisResult.riceScore} />
-            <AbTestDisplay abTest={analysisResult.abTestSuggestion} />
-          </div>
-        )}
+          )}
+        </main>
       </div>
     </ResponsiveContainer>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
