@@ -187,4 +187,36 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('CHARGED $1,250.00 ON INVOICE WITH TAX ERROR!');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Fractional Effort Clamping Combined with Over-100% Confidence
+   * When a product manager inputs high-confidence experimental data (>100% confidence)
+   * with sub-half-week effort estimates (e.g. 0.2 weeks), the RICE calculator must clamp
+   * effort to the 0.5 floor while correctly scaling high confidence with fractional reach and impact.
+   */
+  it('calculates RICE score with sub-0.5 effort clamping and confidence over 100%', () => {
+    const score = calculateRiceScore(2500, 1.5, 125, 0.2);
+    expect(score).toBe(9.4);
+    expect(Number.isFinite(score)).toBe(true);
+  });
+
+  /**
+   * Real-World Scenario: Complex Multi-Keyword Support Email Containing Billing, SSO, and OTP Terminology
+   * When an enterprise customer submits a complex ticket referencing billing (tax/invoice), multi-factor auth (OTP),
+   * and enterprise identity (Okta/SAML), the heuristic router must prioritize enterprise SSO identity.
+   */
+  it('prioritizes enterprise identity routing when billing, OTP, and SSO terms appear together', () => {
+    const route = routeHeuristicComplaint('User received tax and invoice billing error during checkout, then SAML Okta SSO login timed out while waiting for OTP code');
+    expect(route).toBe('sso');
+  });
+
+  /**
+   * Real-World Scenario: Markdown-Formatted Support Ticket with Bullet Points, Special Characters, and Mixed-Case Pricing Terms
+   * Support agents copy-paste markdown tickets containing bullet lists, hashtags, and currency pricing terms (e.g. "* Issue #42: Incorrect TAX & PRICE breakdown").
+   * The heuristic router must parse through markdown symbols and route to billing.
+   */
+  it('routes markdown bulleted feedback with tax and pricing symbols to billing', () => {
+    const route = routeHeuristicComplaint('* Bug #104: Incorrect TAX & PRICE breakdown on monthly subscription!\n* Status: Unresolved');
+    expect(route).toBe('billing');
+  });
 });
