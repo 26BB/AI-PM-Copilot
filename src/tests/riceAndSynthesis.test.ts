@@ -189,6 +189,37 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
   });
 
   /**
+   * Real-World Scenario: Small Scale Niche Feature or Pilot Launch RICE Scoring
+   * When evaluating niche features or localized beta tests with small reach numbers (e.g., 500 users per month),
+   * the score calculation must accurately evaluate fractional reach calculations ((500/1000) * 1.5 * 0.9 / 1.0 = 0.675 -> 0.7).
+   */
+  it('correctly calculates RICE score for fractional reach and decimal parameters', () => {
+    const score = calculateRiceScore(500, 1.5, 90, 1.0);
+    expect(score).toBe(0.7);
+    expect(Number.isFinite(score)).toBe(true);
+  });
+
+  /**
+   * Real-World Scenario: Support Tickets with Tax and Invoice Queries
+   * Customers contacting support regarding billing discrepancies often express concerns about tax calculations or invoice receipts.
+   * The router must identify words like "taxes" or "invoice" in mixed text and route them to the billing fallback.
+   */
+  it('routes feedback containing billing and tax keywords accurately to billing', () => {
+    const route = routeHeuristicComplaint('Need tax breakdown and automated invoice receipt for corporate accounting');
+    expect(route).toBe('billing');
+  });
+
+  /**
+   * Real-World Scenario: General Authentication and One-Time Verification Failures
+   * Customer complaints regarding SMS verification codes, 2FA logins, or login timeouts that do not mention SSO or Okta
+   * should default to the OTP fallback route.
+   */
+  it('routes SMS and multi-factor verification complaints to default OTP flow', () => {
+    const route = routeHeuristicComplaint('SMS verification code expired before user entered it on mobile');
+    expect(route).toBe('otp');
+  });
+
+  /**
    * Real-World Scenario: Fractional Effort Clamping Combined with Over-100% Confidence
    * When a product manager inputs high-confidence experimental data (>100% confidence)
    * with sub-half-week effort estimates (e.g. 0.2 weeks), the RICE calculator must clamp
