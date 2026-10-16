@@ -2,7 +2,8 @@
  * @vitest-environment happy-dom
  */
 import { describe, it, expect } from 'vitest';
-import React from 'react';
+// React import omitted: React 17+ jsx transform ('react-jsx') does not require React in scope,
+// avoiding TS6133 unused variable errors when strict noUnusedLocals is enabled.
 import { render, screen } from '@testing-library/react';
 import { App } from '../main';
 
