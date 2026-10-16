@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ComplaintForm } from './components/ComplaintForm';
+import { SourceTag } from './components/SourceTagSelector';
 import { PrdSkeletonDisplay } from './components/PrdSkeletonDisplay';
 import { RiceScoreDisplay } from './components/RiceScoreDisplay';
 import { AbTestDisplay } from './components/AbTestDisplay';
@@ -65,7 +66,11 @@ export function App(): React.JSX.Element {
       </header>
 
       <main className="app-main">
-        <ComplaintForm onSubmit={handleGenerateArtifacts} isLoading={isLoading} />
+        <ComplaintForm
+          onSubmit={handleGenerateArtifacts}
+          isLoading={isLoading}
+          initialSourceTag={selectedSourceTag as SourceTag}
+        />
 
         {isLoading && (
           <LoadingSpinner message="Analyzing complaint with Gemini AI to generate PRD skeleton, RICE score, & A/B test..." />
