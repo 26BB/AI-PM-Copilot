@@ -218,4 +218,24 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('SMS verification code expired before user entered it on mobile');
     expect(route).toBe('otp');
   });
+
+  /**
+   * Real-World Scenario: Low-Impact High-Confidence Edge Cases with Rounding
+   * When feature specs have low fractional impact values (e.g. 0.5) and fractional confidence levels,
+   * RICE score calculation accurately computes and rounds the score to one decimal place.
+   */
+  it('handles fractional impact and confidence with precise single-decimal rounding', () => {
+    const score = calculateRiceScore(25000, 0.5, 75, 4.0);
+    expect(score).toBe(2.3);
+  });
+
+  /**
+   * Real-World Scenario: Mixed Pricing Feedback with Embedded Domain Extensions
+   * User feedback referencing pricing issues alongside invoice attachments (e.g. "invoice_summary.pdf")
+   * should correctly match billing routing keywords.
+   */
+  it('routes feedback containing embedded invoice file references and pricing terms to billing', () => {
+    const route = routeHeuristicComplaint('Discrepancy in tier pricing observed in attached invoice_summary.pdf');
+    expect(route).toBe('billing');
+  });
 });

@@ -10,13 +10,18 @@
 
 | Date Found | Category | File | Issue | Priority |
 |------------|----------|------|-------|----------|
-| 2026-10-15 | 🧪 Test | src/tests/riceAndSynthesis.test.ts | Expand coverage for RICE + complaint routing — additional edge cases (PR #35, #37 had conflicts) | MEDIUM |
 | 2026-10-15 | ✨ Feat | src/main.tsx | Source tag selector integration for complaint forms (PR #39 had conflicts) | MEDIUM |
 | 2026-10-15 | ✨ Feat | src/components/ResponsiveContainer.tsx, src/main.tsx | Mobile responsive layout improvements (PR #36 had conflicts) | MEDIUM |
 
 ---
 
 ## ✅ Completed Log (most recent first)
+
+### 2026-10-15 — Expand Coverage for RICE + Complaint Routing
+**Status:** ✅ Fixed
+**Fixed:**
+- 🧪 Expand test coverage in `src/tests/riceAndSynthesis.test.ts` for RICE calculation edge cases (fractional impact/confidence single-decimal rounding) and complaint heuristic routing (embedded invoice attachments).
+**PR:** `test: expand coverage for RICE + complaint routing [2026-10-15]`
 
 ### 2026-10-15 — Fix TS6133 Unused React Import in mobileResponsive.test.tsx
 **Status:** ✅ Fixed
