@@ -170,4 +170,51 @@ describe('Gemini API Integration Service', () => {
       'Gemini API request failed (403): API Key Invalid'
     );
   });
+
+  /**
+   * Real-world scenario: Gemini API returns output surrounded by conversational preamble or postamble text.
+   * Expectation: Response parser extracts JSON block successfully and returns structured AnalysisResult.
+   */
+  it('parses Gemini API output containing conversational preamble/postamble surrounding JSON', () => {
+    const rawJson = JSON.stringify({
+      prdSkeleton: {
+        problemStatement: 'Export to CSV fails on large datasets.',
+        userPersona: 'Data Analyst',
+        userStory: 'As an analyst, I want reliable CSV export so I can build reports.',
+        acceptanceCriteria: ['Supports up to 100k rows'],
+      },
+      riceScore: {
+        reach: 3000,
+        impact: 2.5,
+        confidence: 85,
+        effort: 2,
+        reasoning: 'High analyst impact.',
+      },
+      abTestSuggestion: {
+        hypothesis: 'Background CSV export worker will eliminate timeouts.',
+        controlVariant: 'Synchronous export',
+        testVariant: 'Async background worker with progress bar',
+        successMetric: 'CSV export success rate',
+      },
+    });
+
+    const outputWithPreamble = `Here is the requested PRD analysis for your complaint:\n\`\`\`json\n${rawJson}\n\`\`\`\nHope this helps! Let me know if you need any adjustments.`;
+    const result = parseGeminiResponse(outputWithPreamble);
+
+    expect(result.prdSkeleton.problemStatement).toBe('Export to CSV fails on large datasets.');
+    expect(result.riceScore.score).toBe(3.2);
+
+    const outputUnfencedWithText = `Sure thing! Here is the JSON: ${rawJson} Hope that works!`;
+    const unfencedResult = parseGeminiResponse(outputUnfencedWithText);
+    expect(unfencedResult.prdSkeleton.userPersona).toBe('Data Analyst');
+  });
+
+  /**
+   * Real-world scenario: Gemini API returns malformed non-JSON response string.
+   * Expectation: Throws descriptive error indicating failure to parse JSON.
+   */
+  it('throws descriptive error when raw output contains invalid JSON syntax', () => {
+    const malformedText = 'This is completely invalid response with no JSON braces or structure.';
+    expect(() => parseGeminiResponse(malformedText)).toThrow('Failed to parse Gemini API JSON response');
+  });
 });

@@ -128,13 +128,28 @@ Respond strictly with a valid, raw JSON object (no markdown code fences or pre-t
  * @returns Parsed AnalysisResult object with valid fallback fields if necessary
  */
 export function parseGeminiResponse(rawText: string): AnalysisResult {
-  const cleaned = rawText
-    .replace(/^```json\s*/i, '')
-    .replace(/^```\s*/i, '')
-    .replace(/\s*```$/i, '')
-    .trim();
+  // LLMs occasionally include conversational preambles/postambles surrounding output.
+  // First extract content inside markdown code fences if present; otherwise extract outer json object.
+  let jsonString = rawText.trim();
 
-  const parsed = JSON.parse(cleaned) as Partial<AnalysisResult>;
+  const codeBlockMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (codeBlockMatch && codeBlockMatch[1]) {
+    jsonString = codeBlockMatch[1].trim();
+  } else {
+    const firstBrace = rawText.indexOf('{');
+    const lastBrace = rawText.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      jsonString = rawText.substring(firstBrace, lastBrace + 1).trim();
+    }
+  }
+
+  let parsed: Partial<AnalysisResult> = {};
+  try {
+    parsed = JSON.parse(jsonString) as Partial<AnalysisResult>;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown JSON syntax error';
+    throw new Error(`Failed to parse Gemini API JSON response: ${message}`);
+  }
 
   const reach = typeof parsed.riceScore?.reach === 'number' ? parsed.riceScore.reach : 1000;
   const impact = typeof parsed.riceScore?.impact === 'number' ? parsed.riceScore.impact : 2;

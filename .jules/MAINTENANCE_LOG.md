@@ -17,6 +17,13 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-15 — Harden Gemini Response Parser Against Conversational Preambles/Postambles
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Enhanced `parseGeminiResponse` in `src/services/geminiService.ts` with robust regex extraction for fenced markdown code blocks and boundary braces to safely handle conversational preambles/postambles from Gemini API outputs. Added descriptive error handling for JSON syntax errors.
+- 🧪 Added unit tests in `src/tests/geminiService.test.ts` verifying parsing of conversational preambles/postambles surrounding JSON and invalid JSON syntax handling.
+**PR:** `chore(atlas): harden Gemini response parser against conversational preambles [2026-10-15]`
+
 ### 2026-10-15 — Expand Coverage for RICE + Complaint Routing
 **Status:** ✅ Fixed
 **Fixed:**
