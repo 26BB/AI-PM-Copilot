@@ -151,14 +151,27 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
     throw new Error(`Failed to parse Gemini API JSON response: ${message}`);
   }
 
-  const reach = typeof parsed.riceScore?.reach === 'number' ? parsed.riceScore.reach : 1000;
-  const impact = typeof parsed.riceScore?.impact === 'number' ? parsed.riceScore.impact : 2;
-  const confidence = typeof parsed.riceScore?.confidence === 'number' ? parsed.riceScore.confidence : 80;
-  const effort = typeof parsed.riceScore?.effort === 'number' ? Math.max(0.5, parsed.riceScore.effort) : 2;
+  const reach =
+    typeof parsed.riceScore?.reach === 'number' && Number.isFinite(parsed.riceScore.reach) && parsed.riceScore.reach >= 0
+      ? parsed.riceScore.reach
+      : 1000;
+  const impact =
+    typeof parsed.riceScore?.impact === 'number' && Number.isFinite(parsed.riceScore.impact) && parsed.riceScore.impact >= 0
+      ? parsed.riceScore.impact
+      : 2;
+  const confidence =
+    typeof parsed.riceScore?.confidence === 'number' && Number.isFinite(parsed.riceScore.confidence) && parsed.riceScore.confidence >= 0
+      ? parsed.riceScore.confidence
+      : 80;
+  const effort =
+    typeof parsed.riceScore?.effort === 'number' && Number.isFinite(parsed.riceScore.effort) && parsed.riceScore.effort > 0
+      ? Math.max(0.5, parsed.riceScore.effort)
+      : 2;
+  const calculatedScore = Math.round((((reach / 1000) * impact * (confidence / 100)) / effort) * 10) / 10;
   const score =
-    typeof parsed.riceScore?.score === 'number'
+    typeof parsed.riceScore?.score === 'number' && Number.isFinite(parsed.riceScore.score)
       ? parsed.riceScore.score
-      : Math.round((((reach / 1000) * impact * (confidence / 100)) / effort) * 10) / 10;
+      : calculatedScore;
 
   return {
     prdSkeleton: {
