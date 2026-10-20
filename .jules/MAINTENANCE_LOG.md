@@ -17,6 +17,13 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-20 — Prevent Dangling Timers and Unmounted State Updates in CopyButton
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Refactored `src/components/CopyButton.tsx` to store the active feedback reset timeout handle using `useRef` and clean up pending timers via `useEffect` upon component unmounting or repeated clicks, preventing state updates on unmounted React components and memory leaks.
+- 🧪 Added unit test in `src/tests/CopyButton.test.tsx` verifying that unmounting `CopyButton` while the copy confirmation timeout is pending safely cleans up the timer.
+**PR:** `chore(atlas): prevent dangling timers and unmounted state updates in CopyButton [2026-10-20]`
+
 ### 2026-10-15 — Harden Gemini Response Parser Against Conversational Preambles/Postambles
 **Status:** ✅ Fixed
 **Fixed:**

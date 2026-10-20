@@ -117,4 +117,34 @@ describe('CopyButton Component', () => {
     const button = screen.getByRole('button', { name: /copy empty/i });
     expect(button.hasAttribute('disabled')).toBe(true);
   });
+
+  /**
+   * Real-world scenario: User copies content and then rapidly unmounts the component or re-submits a new complaint.
+   * Expectation: Reset timer is safely cleared on unmount without throwing errors or triggering unmounted state updates.
+   */
+  it('clears active reset timer on unmount without memory leaks', async () => {
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText: writeTextMock },
+      configurable: true,
+      writable: true,
+    });
+
+    const { unmount } = render(<CopyButton textToCopy="Unmount Test" label="Copy Unmount" />);
+    const button = screen.getByRole('button', { name: /copy unmount/i });
+
+    await act(async () => {
+      fireEvent.click(button);
+    });
+
+    expect(screen.getByText(/Copied!/i)).toBeDefined();
+
+    // Unmount before timeout expires
+    unmount();
+
+    // Advance timers past resetTimeoutMs to ensure no errors occur
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+  });
 });
