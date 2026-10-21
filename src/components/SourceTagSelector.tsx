@@ -87,8 +87,9 @@ export function SourceTagSelector({
       aria-label="Feedback Source Channel Selector"
       style={{ marginBottom: '16px' }}
     >
-      <label
-        htmlFor="source-tag-group"
+      {/* Replaced invalid htmlFor on div with span id + aria-labelledby for WCAG compliant group labeling */}
+      <span
+        id="source-tag-label"
         style={{
           display: 'block',
           fontSize: '0.9rem',
@@ -98,11 +99,11 @@ export function SourceTagSelector({
         }}
       >
         Feedback Source Context
-      </label>
+      </span>
       <div
         id="source-tag-group"
         role="group"
-        aria-label="Select source channel"
+        aria-labelledby="source-tag-label"
         style={{
           display: 'flex',
           flexWrap: 'wrap',
