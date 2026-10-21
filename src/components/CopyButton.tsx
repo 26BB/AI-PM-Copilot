@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export interface CopyButtonProps {
   /** The text content to be copied to the user's clipboard */
@@ -64,18 +64,34 @@ export function CopyButton({
   onCopy,
 }: CopyButtonProps): React.JSX.Element {
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  // Store active timeout handle to prevent memory leaks or state updates on unmounted components
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up any pending reset timer on component unmount to avoid calling React state setters on unmounted components
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = async (): Promise<void> => {
     if (!textToCopy) return;
 
     const success = await copyToClipboard(textToCopy);
     if (success) {
+      // Clear any prior pending reset timeout if user clicks copy repeatedly
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
       setIsCopied(true);
       if (onCopy) {
         onCopy(textToCopy);
       }
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setIsCopied(false);
+        timeoutRef.current = null;
       }, resetTimeoutMs);
     }
   };
