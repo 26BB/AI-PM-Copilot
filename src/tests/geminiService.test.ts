@@ -217,4 +217,36 @@ describe('Gemini API Integration Service', () => {
     const malformedText = 'This is completely invalid response with no JSON braces or structure.';
     expect(() => parseGeminiResponse(malformedText)).toThrow('Failed to parse Gemini API JSON response');
   });
+
+  /**
+   * Real-world scenario: Gemini API returns corrupted or non-finite numbers (NaN, Infinity, negative effort) for RICE metrics.
+   * Expectation: Response parser safely falls back to valid non-NaN default values and calculates a finite score.
+   */
+  it('sanitizes non-finite or NaN RICE metrics into valid numerical defaults', () => {
+    const invalidNumbersJson = JSON.stringify({
+      prdSkeleton: {
+        problemStatement: 'Search latency spike.',
+      },
+      riceScore: {
+        reach: null,
+        impact: 'invalid',
+        confidence: -50,
+        effort: 0,
+        score: null,
+      },
+    });
+
+    const result = parseGeminiResponse(invalidNumbersJson);
+
+    expect(Number.isFinite(result.riceScore.reach)).toBe(true);
+    expect(result.riceScore.reach).toBe(1000);
+    expect(Number.isFinite(result.riceScore.impact)).toBe(true);
+    expect(result.riceScore.impact).toBe(2);
+    expect(Number.isFinite(result.riceScore.confidence)).toBe(true);
+    expect(result.riceScore.confidence).toBe(80);
+    expect(Number.isFinite(result.riceScore.effort)).toBe(true);
+    expect(result.riceScore.effort).toBe(2);
+    expect(Number.isFinite(result.riceScore.score)).toBe(true);
+    expect(result.riceScore.score).toBe(0.8);
+  });
 });
