@@ -89,6 +89,9 @@ export function CopyButton({
       if (onCopy) {
         onCopy(textToCopy);
       }
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
       timeoutRef.current = setTimeout(() => {
         setIsCopied(false);
         timeoutRef.current = null;

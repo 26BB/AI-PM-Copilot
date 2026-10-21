@@ -219,6 +219,32 @@ describe('Gemini API Integration Service', () => {
   });
 
   /**
+<<<<<<< HEAD
+   * Real-world scenario: Gemini API returns stringified numbers, NaN, or out-of-bounds values in RICE score fields.
+   * Expectation: Response parser converts stringified numbers, rejects NaN/Infinity, clamps bounds, and calculates finite score.
+   */
+  it('parses stringified numbers and sanitizes NaN or out-of-bound RICE metrics safely', () => {
+    const jsonOutput = JSON.stringify({
+      prdSkeleton: { problemStatement: 'Login error' },
+      riceScore: {
+        reach: '5000',
+        impact: '3',
+        confidence: '120',
+        effort: '0',
+        score: NaN,
+      },
+      abTestSuggestion: { hypothesis: 'Fix login' },
+    });
+
+    const result = parseGeminiResponse(jsonOutput);
+
+    expect(result.riceScore.reach).toBe(5000);
+    expect(result.riceScore.impact).toBe(3);
+    expect(result.riceScore.confidence).toBe(100); // Clamped to 100%
+    expect(result.riceScore.effort).toBe(0.5); // Clamped to min 0.5
+    expect(Number.isFinite(result.riceScore.score)).toBe(true);
+    expect(result.riceScore.score).toBe(30); // (5000/1000 * 3 * 1.0) / 0.5 = 30
+=======
    * Real-world scenario: Gemini API returns corrupted or non-finite numbers (NaN, Infinity, negative effort) for RICE metrics.
    * Expectation: Response parser safely falls back to valid non-NaN default values and calculates a finite score.
    */
@@ -248,5 +274,6 @@ describe('Gemini API Integration Service', () => {
     expect(result.riceScore.effort).toBe(2);
     expect(Number.isFinite(result.riceScore.score)).toBe(true);
     expect(result.riceScore.score).toBe(0.8);
+>>>>>>> main
   });
 });
