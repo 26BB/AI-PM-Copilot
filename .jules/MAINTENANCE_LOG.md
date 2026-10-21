@@ -17,6 +17,14 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-21 — Sanitize Numeric LLM Fields and Cleanup CopyButton Timers
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Introduced `parseFiniteNumber` helper in `src/services/geminiService.ts` to convert stringified numbers (e.g. `"reach": "5000"`), reject `NaN`/`Infinity`, and clamp valid ranges (`effort >= 0.5`, `0 <= confidence <= 100`, `reach >= 0`, `impact >= 0`) from LLM JSON responses.
+- 🧹 Added `timerRef` (`useRef`) and cleanup `useEffect` in `src/components/CopyButton.tsx` to safely cancel active feedback reset timers on component unmount or re-trigger, preventing React memory leaks.
+- 🧪 Added unit test in `src/tests/geminiService.test.ts` verifying stringified numbers, `NaN`/`Infinity`, and out-of-bounds metric handling.
+**PR:** `chore(atlas): sanitize numeric LLM fields and cleanup CopyButton timers [2026-10-21]`
+
 ### 2026-10-15 — Harden Gemini Response Parser Against Conversational Preambles/Postambles
 **Status:** ✅ Fixed
 **Fixed:**

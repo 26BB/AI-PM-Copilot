@@ -122,6 +122,30 @@ Respond strictly with a valid, raw JSON object (no markdown code fences or pre-t
 }
 
 /**
+ * Safely converts an unknown value (number or numeric string) into a finite valid number.
+ *
+ * WHY: LLM JSON outputs frequently format numeric fields as stringified numbers (e.g. "reach": "5000")
+ * or produce NaN/Infinity values. Parsing string numbers and rejecting NaN/Infinity ensures RICE
+ * math calculations remain accurate without throwing errors or displaying NaN in the UI.
+ *
+ * @param value - Unknown input value from LLM JSON response
+ * @param defaultValue - Fallback numeric value if input is invalid
+ * @returns Finite number
+ */
+export function parseFiniteNumber(value: unknown, defaultValue: number): number {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const parsed = parseFloat(value.trim());
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+  return defaultValue;
+}
+
+/**
  * Safely parses raw text or JSON response returned by the Gemini API into a strongly typed AnalysisResult.
  *
  * @param rawText - Raw string output returned from the AI model
@@ -151,14 +175,16 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
     throw new Error(`Failed to parse Gemini API JSON response: ${message}`);
   }
 
-  const reach = typeof parsed.riceScore?.reach === 'number' ? parsed.riceScore.reach : 1000;
-  const impact = typeof parsed.riceScore?.impact === 'number' ? parsed.riceScore.impact : 2;
-  const confidence = typeof parsed.riceScore?.confidence === 'number' ? parsed.riceScore.confidence : 80;
-  const effort = typeof parsed.riceScore?.effort === 'number' ? Math.max(0.5, parsed.riceScore.effort) : 2;
-  const score =
-    typeof parsed.riceScore?.score === 'number'
-      ? parsed.riceScore.score
-      : Math.round((((reach / 1000) * impact * (confidence / 100)) / effort) * 10) / 10;
+  const reach = Math.max(0, parseFiniteNumber(parsed.riceScore?.reach, 1000));
+  const impact = Math.max(0, parseFiniteNumber(parsed.riceScore?.impact, 2));
+  const confidence = Math.min(100, Math.max(0, parseFiniteNumber(parsed.riceScore?.confidence, 80)));
+  const effort = Math.max(0.5, parseFiniteNumber(parsed.riceScore?.effort, 2));
+
+  const calculatedScore = Math.round((((reach / 1000) * impact * (confidence / 100)) / effort) * 10) / 10;
+  const parsedScore = parsed.riceScore?.score !== undefined
+    ? parseFiniteNumber(parsed.riceScore.score, calculatedScore)
+    : calculatedScore;
+  const score = Number.isFinite(parsedScore) ? parsedScore : calculatedScore;
 
   return {
     prdSkeleton: {
