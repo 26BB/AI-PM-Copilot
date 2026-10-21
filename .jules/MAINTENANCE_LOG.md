@@ -10,12 +10,26 @@
 
 | Date Found | Category | File | Issue | Priority |
 |------------|----------|------|-------|----------|
-| 2026-10-15 | ✨ Feat | src/main.tsx | Source tag selector integration for complaint forms (PR #39 had conflicts) | MEDIUM |
 | 2026-10-15 | ✨ Feat | src/components/ResponsiveContainer.tsx, src/main.tsx | Mobile responsive layout improvements (PR #36 had conflicts) | MEDIUM |
 
 ---
 
 ## ✅ Completed Log (most recent first)
+
+### 2026-10-15 — Fix SourceTagSelector ARIA Label Association & Harden RICE Metrics Parsing
+**Status:** ✅ Fixed
+**Fixed:**
+- ♿ Fixed invalid HTML label association in `src/components/SourceTagSelector.tsx` by replacing `<label htmlFor="source-tag-group">` with `<span id="source-tag-label">` and `aria-labelledby="source-tag-label"` on the button group `<div>`, ensuring proper WCAG screen reader accessibility.
+- 🛡️ Hardened RICE numerical metric parsing in `src/services/geminiService.ts` with `Number.isFinite()` and non-negative metric checks (`reach >= 0`, `impact >= 0`, `confidence >= 0`, `effort > 0`) to prevent `NaN` or `Infinity` from corrupting UI calculations.
+- 🧪 Added unit test coverage in `src/tests/geminiService.test.ts` verifying parsing of corrupted/non-finite numbers into safe numerical defaults.
+**PR:** `chore(atlas): fix SourceTagSelector ARIA label association & harden RICE metrics parsing [2026-10-15]`
+
+### 2026-10-20 — Prevent Dangling Timers and Unmounted State Updates in CopyButton
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Refactored `src/components/CopyButton.tsx` to store the active feedback reset timeout handle using `useRef` and clean up pending timers via `useEffect` upon component unmounting or repeated clicks, preventing state updates on unmounted React components and memory leaks.
+- 🧪 Added unit test in `src/tests/CopyButton.test.tsx` verifying that unmounting `CopyButton` while the copy confirmation timeout is pending safely cleans up the timer.
+**PR:** `chore(atlas): prevent dangling timers and unmounted state updates in CopyButton [2026-10-20]`
 
 ### 2026-10-21 — Sanitize Numeric LLM Fields and Cleanup CopyButton Timers
 **Status:** ✅ Fixed
