@@ -16,6 +16,13 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-22 — Resolve Merge Conflict in GeminiService Test
+**Status:** ✅ Fixed
+**Fixed:**
+- 🐛 Resolved leftover git merge conflict markers (`<<<<<<< HEAD`, `=======`, `>>>>>>> main`) in `src/tests/geminiService.test.ts`.
+- 🧪 Reconciled unit test expectations for stringified, NaN, and out-of-bounds RICE metric fields so that `npx tsc --noEmit`, `npx vitest run`, and `npm run build` all pass cleanly.
+**PR:** `chore(atlas): resolve merge conflict in geminiService test [2026-10-22]`
+
 ### 2026-10-15 — Fix SourceTagSelector ARIA Label Association & Harden RICE Metrics Parsing
 **Status:** ✅ Fixed
 **Fixed:**
