@@ -185,7 +185,7 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
   const confidence = parsedConfidence >= 0 ? Math.min(100, parsedConfidence) : 80;
 
   const parsedEffort = parseFiniteNumber(parsed.riceScore?.effort, 2);
-  const effort = parsedEffort > 0 ? Math.max(0.5, parsedEffort) : 2;
+  const effort = parsedEffort >= 0 ? Math.max(0.5, parsedEffort) : 2;
 
   const calculatedScore = Math.round((((reach / 1000) * impact * (confidence / 100)) / effort) * 10) / 10;
   const score =
