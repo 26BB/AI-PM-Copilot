@@ -276,4 +276,36 @@ describe('Gemini API Integration Service', () => {
     expect(Number.isFinite(result.riceScore.score)).toBe(true);
     expect(result.riceScore.score).toBe(0.8);
   });
+
+  /**
+   * Real-world scenario: Gemini API returns a stringified score field or a negative score.
+   * Expectation: Response parser converts valid stringified scores (e.g. "15.5") to numeric 15.5 and falls back negative scores to calculatedScore.
+   */
+  it('parses stringified RICE score field and falls back negative scores safely', () => {
+    const stringScoreJson = JSON.stringify({
+      prdSkeleton: { problemStatement: 'Timeout issue' },
+      riceScore: {
+        reach: 1000,
+        impact: 2,
+        confidence: 80,
+        effort: 2,
+        score: '15.5',
+      },
+    });
+    const stringResult = parseGeminiResponse(stringScoreJson);
+    expect(stringResult.riceScore.score).toBe(15.5);
+
+    const negativeScoreJson = JSON.stringify({
+      prdSkeleton: { problemStatement: 'Timeout issue' },
+      riceScore: {
+        reach: 1000,
+        impact: 2,
+        confidence: 80,
+        effort: 2,
+        score: -10,
+      },
+    });
+    const negativeResult = parseGeminiResponse(negativeScoreJson);
+    expect(negativeResult.riceScore.score).toBe(0.8);
+  });
 });

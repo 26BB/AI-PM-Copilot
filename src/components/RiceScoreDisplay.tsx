@@ -16,10 +16,12 @@ export interface RiceScoreDisplayProps {
  * @returns Priority tier label ('High Priority', 'Medium Priority', or 'Low Priority')
  */
 export function getPriorityTier(score: number): 'High Priority' | 'Medium Priority' | 'Low Priority' {
-  if (score >= 10) {
+  // WHY: Non-finite inputs (e.g. NaN, null, undefined) must default safely to 'Low Priority'
+  const numericScore = typeof score === 'number' && Number.isFinite(score) ? score : 0;
+  if (numericScore >= 10) {
     return 'High Priority';
   }
-  if (score >= 3) {
+  if (numericScore >= 3) {
     return 'Medium Priority';
   }
   return 'Low Priority';
@@ -36,19 +38,21 @@ export function formatRiceMetric(
   value: number,
   type: 'reach' | 'impact' | 'confidence' | 'effort' | 'score'
 ): string {
+  // WHY: Non-finite numbers (NaN, Infinity, undefined) cause formatting crashes or display "NaN"
+  const safeValue = typeof value === 'number' && Number.isFinite(value) ? value : 0;
   switch (type) {
     case 'reach':
-      return `${value.toLocaleString()} users/mo`;
+      return `${safeValue.toLocaleString()} users/mo`;
     case 'impact':
-      return `${value.toFixed(1)} (scale 0.5–3.0)`;
+      return `${safeValue.toFixed(1)} (scale 0.5–3.0)`;
     case 'confidence':
-      return `${value}%`;
+      return `${safeValue}%`;
     case 'effort':
-      return `${value} person-week${value === 1 ? '' : 's'}`;
+      return `${safeValue} person-week${safeValue === 1 ? '' : 's'}`;
     case 'score':
-      return `${value.toFixed(1)}`;
+      return `${safeValue.toFixed(1)}`;
     default:
-      return `${value}`;
+      return `${safeValue}`;
   }
 }
 

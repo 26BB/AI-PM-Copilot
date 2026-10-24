@@ -24,6 +24,15 @@ describe('formatAbTestMetric helper logic', () => {
   it('trims leading and trailing whitespace from valid success metrics', () => {
     expect(formatAbTestMetric('  SAML SSO Success Rate  ')).toBe('SAML SSO Success Rate');
   });
+
+  /**
+   * Real-world scenario: Non-string metric value (e.g. number or null) is passed to formatAbTestMetric.
+   * Expectation: Helper function safely falls back to default metric without throwing TypeError.
+   */
+  it('safely handles non-string metric inputs by returning fallback metric', () => {
+    expect(formatAbTestMetric(123 as unknown as string)).toBe('Conversion / Completion Rate');
+    expect(formatAbTestMetric(null as unknown as string)).toBe('Conversion / Completion Rate');
+  });
 });
 
 describe('AbTestDisplay Component', () => {

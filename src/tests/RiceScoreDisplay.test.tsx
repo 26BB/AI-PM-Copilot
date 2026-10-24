@@ -33,6 +33,15 @@ describe('getPriorityTier logic', () => {
     expect(getPriorityTier(2.9)).toBe('Low Priority');
     expect(getPriorityTier(0.5)).toBe('Low Priority');
   });
+
+  /**
+   * Real-world scenario: Non-finite or NaN number is passed as a RICE score.
+   * Expectation: getPriorityTier safely categorizes non-finite score as Low Priority.
+   */
+  it('categorizes non-finite or NaN score as Low Priority', () => {
+    expect(getPriorityTier(NaN)).toBe('Low Priority');
+    expect(getPriorityTier(Infinity)).toBe('Low Priority');
+  });
 });
 
 describe('formatRiceMetric helper logic', () => {
@@ -55,6 +64,18 @@ describe('formatRiceMetric helper logic', () => {
     expect(formatRiceMetric(1, 'effort')).toBe('1 person-week');
     expect(formatRiceMetric(2.5, 'effort')).toBe('2.5 person-weeks');
     expect(formatRiceMetric(14.28, 'score')).toBe('14.3');
+  });
+
+  /**
+   * Real-world scenario: Non-finite or NaN numbers are passed to formatRiceMetric.
+   * Expectation: Helper function handles NaN/non-finite numbers safely returning fallback formatted strings.
+   */
+  it('formats NaN and non-finite numbers safely with defaults', () => {
+    expect(formatRiceMetric(NaN, 'reach')).toBe('0 users/mo');
+    expect(formatRiceMetric(NaN, 'impact')).toBe('0.0 (scale 0.5–3.0)');
+    expect(formatRiceMetric(NaN, 'confidence')).toBe('0%');
+    expect(formatRiceMetric(NaN, 'effort')).toBe('0 person-weeks');
+    expect(formatRiceMetric(NaN, 'score')).toBe('0.0');
   });
 });
 

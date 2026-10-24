@@ -188,10 +188,10 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
   const effort = parsedEffort >= 0 ? Math.max(0.5, parsedEffort) : 2;
 
   const calculatedScore = Math.round((((reach / 1000) * impact * (confidence / 100)) / effort) * 10) / 10;
-  const score =
-    typeof parsed.riceScore?.score === 'number' && Number.isFinite(parsed.riceScore.score)
-      ? parsed.riceScore.score
-      : calculatedScore;
+  // WHY: LLM responses often format the score as a string (e.g. "score": "15.5") or produce negative numbers.
+  // Using parseFiniteNumber handles stringified numbers and ensures invalid or negative scores fall back to calculatedScore.
+  const parsedScore = parseFiniteNumber(parsed.riceScore?.score, calculatedScore);
+  const score = parsedScore >= 0 ? parsedScore : calculatedScore;
 
   return {
     prdSkeleton: {
