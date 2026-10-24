@@ -20,7 +20,10 @@ export function normalizeAcceptanceCriteria(criteria?: string[]): string[] {
   if (!criteria || !Array.isArray(criteria)) {
     return ['Feature functionality must be verified against expected behavior.'];
   }
-  const filtered = criteria.map((item) => item.trim()).filter((item) => item.length > 0);
+  // WHY: Array elements from unvalidated AI JSON may contain non-string values (numbers, null)
+  const filtered = criteria
+    .map((item) => (typeof item === 'string' ? item.trim() : String(item ?? '').trim()))
+    .filter((item) => item.length > 0);
   if (filtered.length === 0) {
     return ['Feature functionality must be verified against expected behavior.'];
   }

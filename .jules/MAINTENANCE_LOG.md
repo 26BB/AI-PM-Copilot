@@ -16,6 +16,15 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-22 — Harden RICE score parsing & component metrics display formatting against malformed inputs
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Updated `parseGeminiResponse` in `src/services/geminiService.ts` to parse `score` using `parseFiniteNumber` to support stringified score values (e.g., `"15.5"`) from LLM JSON responses and reject negative score values.
+- 🛡️ Hardened `formatRiceMetric` and `getPriorityTier` in `src/components/RiceScoreDisplay.tsx` using `Number.isFinite` checks to safely handle `NaN`, `null`, or `undefined` metric values without throwing runtime `TypeError` exceptions or rendering `"NaN"`.
+- 🛡️ Hardened `normalizeAcceptanceCriteria` in `src/components/PrdSkeletonDisplay.tsx` and `formatAbTestMetric` in `src/components/AbTestDisplay.tsx` to safely handle non-string array items or non-string metric types.
+- 🧪 Added comprehensive unit test coverage in `src/tests/geminiService.test.ts`, `src/tests/RiceScoreDisplay.test.tsx`, `src/tests/PrdSkeletonDisplay.test.tsx`, and `src/tests/AbTestDisplay.test.tsx`.
+**PR:** `chore(atlas): harden RICE score parsing and component metrics display formatting [2026-10-22]`
+
 ### 2026-10-21 — Resolve Git Merge Conflicts in geminiService.test.ts
 **Status:** ✅ Fixed
 **Fixed:**

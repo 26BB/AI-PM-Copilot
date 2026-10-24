@@ -16,7 +16,8 @@ export interface AbTestDisplayProps {
  * @returns Cleaned or default success metric string
  */
 export function formatAbTestMetric(metric?: string): string {
-  if (!metric || !metric.trim()) {
+  // WHY: Verify type is string to prevent TypeError if non-string metric values are passed from unvalidated AI JSON
+  if (!metric || typeof metric !== 'string' || !metric.trim()) {
     return 'Conversion / Completion Rate';
   }
   return metric.trim();

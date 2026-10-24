@@ -27,6 +27,15 @@ describe('normalizeAcceptanceCriteria helper logic', () => {
     const result = normalizeAcceptanceCriteria(['  First criterion  ', '   ', 'Second criterion']);
     expect(result).toEqual(['First criterion', 'Second criterion']);
   });
+
+  /**
+   * Real-world scenario: Unvalidated AI JSON response contains non-string elements (numbers, nulls) in acceptance criteria list.
+   * Expectation: normalizeAcceptanceCriteria safely converts non-string elements to strings before trimming.
+   */
+  it('safely handles non-string elements in criteria array', () => {
+    const result = normalizeAcceptanceCriteria([123, null, ' Valid criterion '] as unknown as string[]);
+    expect(result).toEqual(['123', 'Valid criterion']);
+  });
 });
 
 describe('PrdSkeletonDisplay Component', () => {
