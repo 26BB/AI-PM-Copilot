@@ -146,6 +146,23 @@ export function parseFiniteNumber(value: unknown, defaultValue: number): number 
 }
 
 /**
+ * Safely converts an unknown value into a trimmed non-empty string.
+ *
+ * WHY: Unvalidated LLM outputs occasionally return objects, arrays, numbers, booleans, or null for string fields.
+ * Validating type string before trimming prevents React runtime errors ("Objects are not valid as a React child").
+ *
+ * @param value - Unknown input value from LLM JSON response
+ * @param defaultValue - Fallback string if input is invalid or whitespace-only
+ * @returns Cleaned non-empty string
+ */
+export function parseNonEmptyString(value: unknown, defaultValue: string): string {
+  if (typeof value === 'string' && value.trim().length > 0) {
+    return value.trim();
+  }
+  return defaultValue;
+}
+
+/**
  * Safely parses raw text or JSON response returned by the Gemini API into a strongly typed AnalysisResult.
  *
  * @param rawText - Raw string output returned from the AI model
@@ -195,9 +212,9 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
 
   return {
     prdSkeleton: {
-      problemStatement: parsed.prdSkeleton?.problemStatement || 'Problem statement derived from user complaint.',
-      userPersona: parsed.prdSkeleton?.userPersona || 'Affected End User',
-      userStory: parsed.prdSkeleton?.userStory || 'As a user, I want a reliable experience so that I can achieve my goals.',
+      problemStatement: parseNonEmptyString(parsed.prdSkeleton?.problemStatement, 'Problem statement derived from user complaint.'),
+      userPersona: parseNonEmptyString(parsed.prdSkeleton?.userPersona, 'Affected End User'),
+      userStory: parseNonEmptyString(parsed.prdSkeleton?.userStory, 'As a user, I want a reliable experience so that I can achieve my goals.'),
       acceptanceCriteria: Array.isArray(parsed.prdSkeleton?.acceptanceCriteria) && parsed.prdSkeleton.acceptanceCriteria.length > 0
         ? parsed.prdSkeleton.acceptanceCriteria
         : ['The system resolves reported issues without errors.'],
@@ -208,13 +225,13 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
       confidence,
       effort,
       score,
-      reasoning: parsed.riceScore?.reasoning || 'RICE score calculated based on estimated reach, impact, confidence, and effort.',
+      reasoning: parseNonEmptyString(parsed.riceScore?.reasoning, 'RICE score calculated based on estimated reach, impact, confidence, and effort.'),
     },
     abTestSuggestion: {
-      hypothesis: parsed.abTestSuggestion?.hypothesis || 'Implementing the fix will improve completion rate.',
-      controlVariant: parsed.abTestSuggestion?.controlVariant || 'Current user flow',
-      testVariant: parsed.abTestSuggestion?.testVariant || 'Optimized flow addressing user feedback',
-      successMetric: parsed.abTestSuggestion?.successMetric || 'Conversion rate',
+      hypothesis: parseNonEmptyString(parsed.abTestSuggestion?.hypothesis, 'Implementing the fix will improve completion rate.'),
+      controlVariant: parseNonEmptyString(parsed.abTestSuggestion?.controlVariant, 'Current user flow'),
+      testVariant: parseNonEmptyString(parsed.abTestSuggestion?.testVariant, 'Optimized flow addressing user feedback'),
+      successMetric: parseNonEmptyString(parsed.abTestSuggestion?.successMetric, 'Conversion rate'),
     },
   };
 }
