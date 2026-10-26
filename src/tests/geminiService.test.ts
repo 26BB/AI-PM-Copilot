@@ -4,6 +4,7 @@ import {
   buildGeminiPrompt,
   parseGeminiResponse,
   generateProductArtifacts,
+  parseNonEmptyString,
 } from '../services/geminiService';
 
 describe('Gemini API Integration Service', () => {
@@ -307,5 +308,43 @@ describe('Gemini API Integration Service', () => {
     });
     const negativeResult = parseGeminiResponse(negativeScoreJson);
     expect(negativeResult.riceScore.score).toBe(0.8);
+  });
+
+  /**
+   * Real-world scenario: Gemini API returns objects, null, or whitespace for string fields.
+   * Expectation: parseNonEmptyString and parseGeminiResponse convert invalid values into clean fallback strings.
+   */
+  it('sanitizes non-string or object inputs in text fields into valid fallback strings', () => {
+    expect(parseNonEmptyString('  valid text  ', 'default')).toBe('valid text');
+    expect(parseNonEmptyString({ details: 'object' }, 'default')).toBe('default');
+    expect(parseNonEmptyString(null, 'default')).toBe('default');
+    expect(parseNonEmptyString('   ', 'default')).toBe('default');
+
+    const malformedStringsJson = JSON.stringify({
+      prdSkeleton: {
+        problemStatement: { err: 'nested object' },
+        userPersona: null,
+        userStory: '   ',
+      },
+      riceScore: {
+        reasoning: 12345,
+      },
+      abTestSuggestion: {
+        hypothesis: ['array item'],
+        controlVariant: null,
+        testVariant: {},
+        successMetric: '',
+      },
+    });
+
+    const result = parseGeminiResponse(malformedStringsJson);
+    expect(result.prdSkeleton.problemStatement).toBe('Problem statement derived from user complaint.');
+    expect(result.prdSkeleton.userPersona).toBe('Affected End User');
+    expect(result.prdSkeleton.userStory).toBe('As a user, I want a reliable experience so that I can achieve my goals.');
+    expect(result.riceScore.reasoning).toBe('RICE score calculated based on estimated reach, impact, confidence, and effort.');
+    expect(result.abTestSuggestion.hypothesis).toBe('Implementing the fix will improve completion rate.');
+    expect(result.abTestSuggestion.controlVariant).toBe('Current user flow');
+    expect(result.abTestSuggestion.testVariant).toBe('Optimized flow addressing user feedback');
+    expect(result.abTestSuggestion.successMetric).toBe('Conversion rate');
   });
 });
