@@ -167,13 +167,19 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
     }
   }
 
-  let parsed: Partial<AnalysisResult> = {};
+  let rawParsed: unknown = {};
   try {
-    parsed = JSON.parse(jsonString) as Partial<AnalysisResult>;
+    rawParsed = JSON.parse(jsonString);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown JSON syntax error';
     throw new Error(`Failed to parse Gemini API JSON response: ${message}`);
   }
+
+  // WHY: Non-object JSON inputs (e.g. JSON.parse("null")) return null or primitive values.
+  // Normalizing to an empty object prevents TypeError exceptions when evaluating optional properties.
+  const parsed = (rawParsed && typeof rawParsed === 'object' && !Array.isArray(rawParsed))
+    ? (rawParsed as Partial<AnalysisResult>)
+    : {};
 
   const parsedReach = parseFiniteNumber(parsed.riceScore?.reach, 1000);
   const reach = parsedReach >= 0 ? parsedReach : 1000;

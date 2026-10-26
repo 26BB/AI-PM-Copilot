@@ -16,6 +16,14 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-22 — Safeguard parseGeminiResponse against non-object JSON payloads
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Updated `parseGeminiResponse` in `src/services/geminiService.ts` to inspect parsed JSON output (`rawParsed`) and normalize non-object or `null` payloads (e.g. `JSON.parse("null")`, numbers, arrays) to an empty object `{}`. This prevents unhandled `TypeError` exceptions during property access and guarantees fallback PM artifact generation.
+- 🧪 Added unit test coverage in `src/tests/geminiService.test.ts` verifying that passing non-object JSON strings like `"null"`, `"123"`, or `"[]"` returns valid default AnalysisResult objects without throwing errors.
+- 🧹 Verified all 83 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds.
+**PR:** `chore(atlas): safeguard parseGeminiResponse against non-object JSON payloads [2026-10-22]`
+
 ### 2026-10-22 — Harden RICE score parsing & component metrics display formatting against malformed inputs
 **Status:** ✅ Fixed
 **Fixed:**
