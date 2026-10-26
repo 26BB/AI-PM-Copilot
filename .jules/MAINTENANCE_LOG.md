@@ -16,6 +16,14 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-25 — Sanitize Non-String LLM Text Fields Against React Render Errors
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Implemented `parseNonEmptyString` helper in `src/services/geminiService.ts` to convert non-string or malformed inputs (objects, arrays, nulls, booleans, whitespace-only strings) from LLM JSON responses into safe string defaults.
+- 🛡️ Applied `parseNonEmptyString` across PRD skeleton (`problemStatement`, `userPersona`, `userStory`), RICE reasoning (`reasoning`), and A/B test fields (`hypothesis`, `controlVariant`, `testVariant`, `successMetric`) to prevent React runtime rendering crashes (`Objects are not valid as a React child`).
+- 🧪 Added comprehensive unit test coverage in `src/tests/geminiService.test.ts` verifying `parseNonEmptyString` and `parseGeminiResponse` string sanitization when LLM returns non-string/object values for text fields.
+**PR:** `chore(atlas): sanitize non-string LLM text fields against React render errors [2026-10-25]`
+
 ### 2026-10-22 — Safeguard parseGeminiResponse against non-object JSON payloads
 **Status:** ✅ Fixed
 **Fixed:**
