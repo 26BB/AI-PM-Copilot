@@ -311,6 +311,23 @@ describe('Gemini API Integration Service', () => {
   });
 
   /**
+   * Real-world scenario: Gemini API returns a non-object valid JSON payload (e.g. "null", numbers, or arrays).
+   * Expectation: Response parser handles non-object JSON values without throwing TypeError and returns complete fallback objects.
+   */
+  it('handles non-object JSON payloads safely without throwing TypeError', () => {
+    const nullResult = parseGeminiResponse('null');
+    expect(nullResult.prdSkeleton.problemStatement).toBe('Problem statement derived from user complaint.');
+    expect(nullResult.riceScore.score).toBe(0.8);
+    expect(nullResult.abTestSuggestion.successMetric).toBe('Conversion rate');
+
+    const numberResult = parseGeminiResponse('123');
+    expect(numberResult.prdSkeleton.userPersona).toBe('Affected End User');
+
+    const arrayResult = parseGeminiResponse('[1, 2, 3]');
+    expect(arrayResult.abTestSuggestion.hypothesis).toBe('Implementing the fix will improve completion rate.');
+  });
+
+  /**
    * Real-world scenario: Gemini API returns objects, null, or whitespace for string fields.
    * Expectation: parseNonEmptyString and parseGeminiResponse convert invalid values into clean fallback strings.
    */
