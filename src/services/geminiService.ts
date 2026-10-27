@@ -221,9 +221,17 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
       problemStatement: parseNonEmptyString(parsed.prdSkeleton?.problemStatement, 'Problem statement derived from user complaint.'),
       userPersona: parseNonEmptyString(parsed.prdSkeleton?.userPersona, 'Affected End User'),
       userStory: parseNonEmptyString(parsed.prdSkeleton?.userStory, 'As a user, I want a reliable experience so that I can achieve my goals.'),
-      acceptanceCriteria: Array.isArray(parsed.prdSkeleton?.acceptanceCriteria) && parsed.prdSkeleton.acceptanceCriteria.length > 0
-        ? parsed.prdSkeleton.acceptanceCriteria
-        : ['The system resolves reported issues without errors.'],
+      // WHY: Unvalidated LLM output array items may contain null, objects, or whitespace-only strings.
+      // Sanitizing each array element prevents React child rendering errors and guarantees clean string lists.
+      acceptanceCriteria: (() => {
+        if (!Array.isArray(parsed.prdSkeleton?.acceptanceCriteria)) {
+          return ['The system resolves reported issues without errors.'];
+        }
+        const sanitized = parsed.prdSkeleton.acceptanceCriteria
+          .map((item) => parseNonEmptyString(item, ''))
+          .filter((item) => item.length > 0);
+        return sanitized.length > 0 ? sanitized : ['The system resolves reported issues without errors.'];
+      })(),
     },
     riceScore: {
       reach,

@@ -16,6 +16,14 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-27 — Sanitize acceptanceCriteria array items in parseGeminiResponse against React render errors
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Updated `parseGeminiResponse` in `src/services/geminiService.ts` to sanitize every element of `acceptanceCriteria` using `parseNonEmptyString` and filter out non-string/empty criteria, preventing React child rendering crashes (`Objects are not valid as a React child`).
+- 🧪 Added unit test coverage in `src/tests/geminiService.test.ts` verifying `parseGeminiResponse` array element sanitization when LLM returns non-string or whitespace items.
+- 🧹 Verified all 85 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): sanitize acceptanceCriteria array items in parseGeminiResponse [2026-10-27]`
+
 ### 2026-10-25 — Sanitize Non-String LLM Text Fields Against React Render Errors
 **Status:** ✅ Fixed
 **Fixed:**

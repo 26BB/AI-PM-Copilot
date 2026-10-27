@@ -364,4 +364,30 @@ describe('Gemini API Integration Service', () => {
     expect(result.abTestSuggestion.testVariant).toBe('Optimized flow addressing user feedback');
     expect(result.abTestSuggestion.successMetric).toBe('Conversion rate');
   });
+
+  /**
+   * Real-world scenario: Gemini API returns an acceptanceCriteria array containing non-string values, nulls, objects, or whitespace-only strings.
+   * Expectation: Response parser sanitizes elements into clean non-empty string lists or falls back to default acceptance criterion.
+   */
+  it('sanitizes acceptanceCriteria array items containing non-string or whitespace-only elements', () => {
+    const malformedCriteriaJson = JSON.stringify({
+      prdSkeleton: {
+        problemStatement: 'Search button non-responsive.',
+        acceptanceCriteria: ['Valid criterion', null, { invalid: 'object' }, '   ', 12345],
+      },
+    });
+
+    const result = parseGeminiResponse(malformedCriteriaJson);
+    expect(result.prdSkeleton.acceptanceCriteria).toEqual(['Valid criterion']);
+
+    const emptyCriteriaJson = JSON.stringify({
+      prdSkeleton: {
+        problemStatement: 'Search button non-responsive.',
+        acceptanceCriteria: [null, '   '],
+      },
+    });
+
+    const emptyResult = parseGeminiResponse(emptyCriteriaJson);
+    expect(emptyResult.prdSkeleton.acceptanceCriteria).toEqual(['The system resolves reported issues without errors.']);
+  });
 });
