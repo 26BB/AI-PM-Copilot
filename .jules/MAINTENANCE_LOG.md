@@ -16,6 +16,14 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-26 — Sanitize Acceptance Criteria Array Items Against Malformed LLM Responses
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Updated `parseGeminiResponse` in `src/services/geminiService.ts` to sanitize each item in `acceptanceCriteria` using `parseNonEmptyString` and filter out non-string/whitespace elements before falling back to default criteria.
+- 🧪 Added comprehensive unit test coverage in `src/tests/geminiService.test.ts` verifying sanitization of non-string, null, object, whitespace, and non-array `acceptanceCriteria` payloads.
+- 🧹 Verified all 85 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds.
+**PR:** `chore(atlas): sanitize acceptance criteria array items against malformed LLM responses [2026-10-26]`
+
 ### 2026-10-25 — Sanitize Non-String LLM Text Fields Against React Render Errors
 **Status:** ✅ Fixed
 **Fixed:**

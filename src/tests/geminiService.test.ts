@@ -364,4 +364,37 @@ describe('Gemini API Integration Service', () => {
     expect(result.abTestSuggestion.testVariant).toBe('Optimized flow addressing user feedback');
     expect(result.abTestSuggestion.successMetric).toBe('Conversion rate');
   });
+
+  /**
+   * Real-world scenario: Gemini API returns acceptanceCriteria array containing non-string items, whitespace strings, or non-array types.
+   * Expectation: parseGeminiResponse filters out non-string/empty items and safely defaults if empty.
+   */
+  it('sanitizes acceptanceCriteria items and filters non-string or whitespace entries', () => {
+    const malformedCriteriaJson = JSON.stringify({
+      prdSkeleton: {
+        acceptanceCriteria: ['Valid criteria', 123, null, '   ', { nested: 'object' }, 'Another valid criteria'],
+      },
+    });
+
+    const result = parseGeminiResponse(malformedCriteriaJson);
+    expect(result.prdSkeleton.acceptanceCriteria).toEqual(['Valid criteria', 'Another valid criteria']);
+
+    const emptyCriteriaJson = JSON.stringify({
+      prdSkeleton: {
+        acceptanceCriteria: [null, '   ', 123],
+      },
+    });
+
+    const emptyResult = parseGeminiResponse(emptyCriteriaJson);
+    expect(emptyResult.prdSkeleton.acceptanceCriteria).toEqual(['The system resolves reported issues without errors.']);
+
+    const nonArrayCriteriaJson = JSON.stringify({
+      prdSkeleton: {
+        acceptanceCriteria: 'Not an array',
+      },
+    });
+
+    const nonArrayResult = parseGeminiResponse(nonArrayCriteriaJson);
+    expect(nonArrayResult.prdSkeleton.acceptanceCriteria).toEqual(['The system resolves reported issues without errors.']);
+  });
 });

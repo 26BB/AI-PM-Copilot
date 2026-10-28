@@ -216,13 +216,22 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
   const parsedScore = parseFiniteNumber(parsed.riceScore?.score, calculatedScore);
   const score = parsedScore >= 0 ? parsedScore : calculatedScore;
 
+  // WHY: Array items from unvalidated LLM responses may contain non-string types, nulls, or whitespace strings.
+  // Sanitizing each element and filtering out empty strings ensures downstream components receive clean string arrays.
+  const rawCriteria = Array.isArray(parsed.prdSkeleton?.acceptanceCriteria)
+    ? parsed.prdSkeleton.acceptanceCriteria
+    : [];
+  const cleanedCriteria = rawCriteria
+    .map((item) => parseNonEmptyString(item, ''))
+    .filter((item) => item.length > 0);
+
   return {
     prdSkeleton: {
       problemStatement: parseNonEmptyString(parsed.prdSkeleton?.problemStatement, 'Problem statement derived from user complaint.'),
       userPersona: parseNonEmptyString(parsed.prdSkeleton?.userPersona, 'Affected End User'),
       userStory: parseNonEmptyString(parsed.prdSkeleton?.userStory, 'As a user, I want a reliable experience so that I can achieve my goals.'),
-      acceptanceCriteria: Array.isArray(parsed.prdSkeleton?.acceptanceCriteria) && parsed.prdSkeleton.acceptanceCriteria.length > 0
-        ? parsed.prdSkeleton.acceptanceCriteria
+      acceptanceCriteria: cleanedCriteria.length > 0
+        ? cleanedCriteria
         : ['The system resolves reported issues without errors.'],
     },
     riceScore: {
