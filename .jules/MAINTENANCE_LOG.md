@@ -16,6 +16,16 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-10-29 — Sanitize Acceptance Criteria & Prevent Duplicate Submissions During Loading
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Updated `parseGeminiResponse` in `src/services/geminiService.ts` to extract non-empty strings from acceptance criteria items returned as objects (e.g. `{ criterion, text, description }`) or primitive values, falling back to valid default criteria if empty.
+- 🛡️ Hardened `normalizeAcceptanceCriteria` in `src/components/PrdSkeletonDisplay.tsx` to handle criteria array elements containing objects or non-string primitives without rendering `"[object Object]"`.
+- 🛡️ Added submission guard in `ComplaintForm.tsx` to block duplicate form submit calls while `isLoading` or `disabled` is true.
+- 🧪 Added unit test coverage across `src/tests/geminiService.test.ts`, `src/tests/PrdSkeletonDisplay.test.tsx`, and `src/tests/ComplaintForm.test.tsx`.
+- 🧹 Verified all 86 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds.
+**PR:** `chore(atlas): sanitize acceptance criteria and prevent duplicate form submissions [2026-10-29]`
+
 ### 2026-10-25 — Sanitize Non-String LLM Text Fields Against React Render Errors
 **Status:** ✅ Fixed
 **Fixed:**

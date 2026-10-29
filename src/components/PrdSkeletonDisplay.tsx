@@ -20,10 +20,26 @@ export function normalizeAcceptanceCriteria(criteria?: string[]): string[] {
   if (!criteria || !Array.isArray(criteria)) {
     return ['Feature functionality must be verified against expected behavior.'];
   }
-  // WHY: Array elements from unvalidated AI JSON may contain non-string values (numbers, null)
+  // WHY: Array elements from unvalidated AI JSON may contain non-string values (objects, numbers, null)
   const filtered = criteria
-    .map((item) => (typeof item === 'string' ? item.trim() : String(item ?? '').trim()))
+    .map((item) => {
+      if (typeof item === 'string') {
+        return item.trim();
+      }
+      if (item && typeof item === 'object') {
+        const obj = item as Record<string, unknown>;
+        const textVal = obj.criterion ?? obj.text ?? obj.description ?? obj.value ?? obj.title;
+        if (typeof textVal === 'string') {
+          return textVal.trim();
+        }
+      }
+      if (typeof item === 'number' || typeof item === 'boolean') {
+        return String(item).trim();
+      }
+      return '';
+    })
     .filter((item) => item.length > 0);
+
   if (filtered.length === 0) {
     return ['Feature functionality must be verified against expected behavior.'];
   }

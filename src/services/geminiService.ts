@@ -163,6 +163,30 @@ export function parseNonEmptyString(value: unknown, defaultValue: string): strin
 }
 
 /**
+ * Safely extracts a non-empty string representation from an acceptance criterion item.
+ * Handles strings, objects with descriptive properties (e.g., { criterion, text }), and primitives.
+ *
+ * @param item - Raw criterion item from LLM JSON response
+ * @returns Trimmed non-empty string or empty string if invalid
+ */
+function sanitizeAcceptanceCriteriaItem(item: unknown): string {
+  if (typeof item === 'string') {
+    return item.trim();
+  }
+  if (item && typeof item === 'object') {
+    const obj = item as Record<string, unknown>;
+    const textVal = obj.criterion ?? obj.text ?? obj.description ?? obj.value ?? obj.title;
+    if (typeof textVal === 'string') {
+      return textVal.trim();
+    }
+  }
+  if (typeof item === 'number' || typeof item === 'boolean') {
+    return String(item).trim();
+  }
+  return '';
+}
+
+/**
  * Safely parses raw text or JSON response returned by the Gemini API into a strongly typed AnalysisResult.
  *
  * @param rawText - Raw string output returned from the AI model
@@ -216,13 +240,18 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
   const parsedScore = parseFiniteNumber(parsed.riceScore?.score, calculatedScore);
   const score = parsedScore >= 0 ? parsedScore : calculatedScore;
 
+  const rawCriteria = parsed.prdSkeleton?.acceptanceCriteria;
+  const sanitizedCriteria = Array.isArray(rawCriteria)
+    ? rawCriteria.map(sanitizeAcceptanceCriteriaItem).filter((item) => item.length > 0)
+    : [];
+
   return {
     prdSkeleton: {
       problemStatement: parseNonEmptyString(parsed.prdSkeleton?.problemStatement, 'Problem statement derived from user complaint.'),
       userPersona: parseNonEmptyString(parsed.prdSkeleton?.userPersona, 'Affected End User'),
       userStory: parseNonEmptyString(parsed.prdSkeleton?.userStory, 'As a user, I want a reliable experience so that I can achieve my goals.'),
-      acceptanceCriteria: Array.isArray(parsed.prdSkeleton?.acceptanceCriteria) && parsed.prdSkeleton.acceptanceCriteria.length > 0
-        ? parsed.prdSkeleton.acceptanceCriteria
+      acceptanceCriteria: sanitizedCriteria.length > 0
+        ? sanitizedCriteria
         : ['The system resolves reported issues without errors.'],
     },
     riceScore: {
