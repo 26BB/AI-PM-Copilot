@@ -73,6 +73,12 @@ export function ComplaintForm({
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+
+    // WHY: Prevent re-submitting when form is disabled or an AI generation request is in progress
+    if (disabled || isLoading) {
+      return;
+    }
+
     const validation = validateComplaint(complaintText);
     if (!validation.isValid) {
       setValidationError(validation.error || 'Invalid complaint input.');

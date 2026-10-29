@@ -112,4 +112,25 @@ describe('ComplaintForm Component', () => {
     expect(submitBtn).toBeDefined();
     expect(submitBtn.hasAttribute('disabled')).toBe(true);
   });
+
+  /**
+   * Real-world scenario: User triggers form submit while loading or disabled.
+   * Expectation: Submission guard prevents firing onSubmit handler.
+   */
+  it('prevents submission when isLoading or disabled is true', () => {
+    const handleSubmit = vi.fn();
+    const { rerender } = render(
+      <ComplaintForm onSubmit={handleSubmit} isLoading={true} initialValue="Valid complaint text over ten chars" />
+    );
+
+    const form = screen.getByRole('form', { name: /complaint input form/i });
+    fireEvent.submit(form);
+    expect(handleSubmit).not.toHaveBeenCalled();
+
+    rerender(
+      <ComplaintForm onSubmit={handleSubmit} disabled={true} initialValue="Valid complaint text over ten chars" />
+    );
+    fireEvent.submit(form);
+    expect(handleSubmit).not.toHaveBeenCalled();
+  });
 });

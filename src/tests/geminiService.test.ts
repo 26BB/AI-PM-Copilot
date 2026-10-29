@@ -364,4 +364,34 @@ describe('Gemini API Integration Service', () => {
     expect(result.abTestSuggestion.testVariant).toBe('Optimized flow addressing user feedback');
     expect(result.abTestSuggestion.successMetric).toBe('Conversion rate');
   });
+
+  /**
+   * Real-world scenario: Gemini API returns object items or numbers in acceptance criteria list.
+   * Expectation: parseGeminiResponse extracts strings or property values and filters out empty items into a valid string array.
+   */
+  it('sanitizes object items and primitives in acceptanceCriteria into valid string array', () => {
+    const jsonOutput = JSON.stringify({
+      prdSkeleton: {
+        problemStatement: 'Search timeout',
+        acceptanceCriteria: [
+          { criterion: 'Query executes within 200ms' },
+          { text: 'Results are paginated' },
+          { description: 'Filters are preserved' },
+          100,
+          true,
+          null,
+          '   ',
+        ],
+      },
+    });
+
+    const result = parseGeminiResponse(jsonOutput);
+    expect(result.prdSkeleton.acceptanceCriteria).toEqual([
+      'Query executes within 200ms',
+      'Results are paginated',
+      'Filters are preserved',
+      '100',
+      'true',
+    ]);
+  });
 });
