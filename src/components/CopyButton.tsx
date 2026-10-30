@@ -81,16 +81,13 @@ export function CopyButton({
 
     const success = await copyToClipboard(textToCopy);
     if (success) {
-      // Clear any prior pending reset timeout if user clicks copy repeatedly
+      // WHY: Clear any prior pending reset timeout before scheduling a new one so fast repeated clicks extend feedback duration properly
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
       }
       setIsCopied(true);
       if (onCopy) {
         onCopy(textToCopy);
-      }
-      if (timeoutRef.current !== null) {
-        clearTimeout(timeoutRef.current);
       }
       timeoutRef.current = setTimeout(() => {
         setIsCopied(false);
