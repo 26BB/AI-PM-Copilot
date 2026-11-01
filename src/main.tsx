@@ -40,7 +40,8 @@ export function App(): React.JSX.Element {
 
   const handleRetry = (): void => {
     if (complaintText) {
-      void handleGenerateArtifacts(complaintText);
+      // WHY: Preserve the chosen feedback source context channel across retries
+      void handleGenerateArtifacts(complaintText, selectedSourceTag);
     }
   };
 
@@ -81,7 +82,12 @@ export function App(): React.JSX.Element {
         )}
 
         {!isLoading && analysisResult && (
-          <div className="analysis-results-container" style={{ marginTop: '24px' }}>
+          <div
+            className="analysis-results-container"
+            role="region"
+            aria-label="Generated PRD Analysis Results"
+            style={{ marginTop: '24px' }}
+          >
             <div
               className="submitted-context-banner"
               style={{

@@ -118,4 +118,52 @@ describe('App Integration Component', () => {
       expect(screen.getByText('Recovered problem statement')).toBeDefined();
     });
   });
+
+  /**
+   * Real-world scenario: PM selects a non-default source tag ('G2 / Capterra'), the request fails, and PM clicks Try Again.
+   * Expectation: The retry call preserves 'G2 / Capterra' as the active source tag and renders the accessible results region.
+   */
+  it('preserves the selected source tag on retry and renders accessible results region', async () => {
+    vi.mocked(geminiService.generateProductArtifacts)
+      .mockRejectedValueOnce(new Error('Temporary 503 service unavailable'))
+      .mockResolvedValueOnce({
+        prdSkeleton: {
+          problemStatement: 'Exporting reviews to CSV fails on G2 feedback',
+          userPersona: 'Product Analyst',
+          userStory: 'As an analyst, I want to export reviews...',
+          acceptanceCriteria: ['Reviews export successfully'],
+        },
+        riceScore: { reach: 1200, impact: 2, confidence: 80, effort: 1, score: 1.9, reasoning: 'Solid ROI' },
+        abTestSuggestion: { hypothesis: 'Hypothesis', controlVariant: 'A', testVariant: 'B', successMetric: 'Metric' },
+      });
+
+    render(<App />);
+
+    const g2TagButton = screen.getByRole('button', { name: /G2 \/ Capterra/i });
+    fireEvent.click(g2TagButton);
+
+    const textarea = screen.getByRole('textbox', { name: /raw user complaint/i });
+    fireEvent.change(textarea, { target: { value: 'Exporting reviews to CSV crashes after 50 rows' } });
+
+    const submitBtn = screen.getByRole('button', { name: /Generate PRD & RICE Score/i });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Temporary 503 service unavailable')).toBeDefined();
+    });
+
+    const retryBtn = screen.getByRole('button', { name: /try again/i });
+    fireEvent.click(retryBtn);
+
+    await waitFor(() => {
+      expect(geminiService.generateProductArtifacts).toHaveBeenLastCalledWith(
+        'Exporting reviews to CSV crashes after 50 rows',
+        'G2 / Capterra'
+      );
+    });
+
+    const resultsRegion = screen.getByRole('region', { name: 'Generated PRD Analysis Results' });
+    expect(resultsRegion).toBeDefined();
+    expect(screen.getByText('Exporting reviews to CSV fails on G2 feedback')).toBeDefined();
+  });
 });
