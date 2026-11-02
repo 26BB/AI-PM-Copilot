@@ -15,6 +15,15 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-11-01 — Preserve Source Channel Tag Across Retries & Enhance Results Region A11y
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Updated `handleRetry` in `src/main.tsx` to pass `selectedSourceTag` to `handleGenerateArtifacts`, ensuring user-selected feedback origin channels (e.g. G2, Twitter/X) are preserved during error retry requests.
+- ♿ Added `role="region"` and `aria-label="Generated PRD Analysis Results"` to `.analysis-results-container` in `src/main.tsx` for enhanced screen reader navigation.
+- 🧪 Added integration test in `src/tests/App.test.tsx` verifying source tag channel preservation on retry and accessible region rendering.
+- 🧹 Verified all 87 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds.
+**PR:** `chore(atlas): preserve source channel tag on retry and add results region a11y [2026-11-01]`
+
 ### 2026-10-29 — Clean redundant timer reset clear in CopyButton & Verify Clear Backlog
 **Status:** ✅ Fixed
 **Fixed:**
