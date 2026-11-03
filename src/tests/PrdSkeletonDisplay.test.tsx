@@ -3,7 +3,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { PrdSkeletonDisplay, normalizeAcceptanceCriteria } from '../components/PrdSkeletonDisplay';
+import { PrdSkeletonDisplay, normalizeAcceptanceCriteria, formatPrdMarkdown } from '../components/PrdSkeletonDisplay';
 import { PrdSkeleton } from '../services/geminiService';
 
 describe('normalizeAcceptanceCriteria helper logic', () => {
@@ -87,5 +87,36 @@ describe('PrdSkeletonDisplay Component', () => {
     expect(screen.getByText('Target User')).toBeDefined();
     expect(screen.getByText('As a user, I want features to work properly so that I can accomplish my goals.')).toBeDefined();
     expect(screen.getByText('Feature functionality must be verified against expected behavior.')).toBeDefined();
+  });
+});
+
+describe('formatPrdMarkdown helper logic', () => {
+  const testPrd: PrdSkeleton = {
+    problemStatement: 'Payment fails with timeout.',
+    userPersona: 'Online Shopper',
+    userStory: 'As a shopper, I want to pay fast.',
+    acceptanceCriteria: ['Payment responds under 2s', 'Retry button available'],
+  };
+
+  /**
+   * Real-world scenario: formatPrdMarkdown is called with only the PRD object.
+   * Expectation: Acceptance criteria are normalized internally and properly formatted as markdown.
+   */
+  it('formats PRD markdown when normalizedCriteria is not provided', () => {
+    const markdown = formatPrdMarkdown(testPrd);
+    expect(markdown).toContain('## Problem Statement\nPayment fails with timeout.');
+    expect(markdown).toContain('## User Persona\nOnline Shopper');
+    expect(markdown).toContain('## User Story\nAs a shopper, I want to pay fast.');
+    expect(markdown).toContain('## Acceptance Criteria\n- Payment responds under 2s\n- Retry button available');
+  });
+
+  /**
+   * Real-world scenario: formatPrdMarkdown is called with pre-normalized criteria to avoid duplicate work.
+   * Expectation: Uses the passed normalized criteria directly in the markdown output.
+   */
+  it('uses pre-normalized criteria when passed as second argument', () => {
+    const preNormalized = ['Pre-normalized criterion 1', 'Pre-normalized criterion 2'];
+    const markdown = formatPrdMarkdown(testPrd, preNormalized);
+    expect(markdown).toContain('## Acceptance Criteria\n- Pre-normalized criterion 1\n- Pre-normalized criterion 2');
   });
 });

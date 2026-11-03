@@ -50,10 +50,12 @@ export function normalizeAcceptanceCriteria(criteria?: string[]): string[] {
  * Formats a PRD Skeleton object into markdown text format suitable for copying to clipboard.
  *
  * @param prd - PrdSkeleton object
+ * @param normalizedCriteria - Optional pre-normalized acceptance criteria list to avoid redundant processing
  * @returns Formatted Markdown string of PRD content
  */
-export function formatPrdMarkdown(prd: PrdSkeleton): string {
-  const criteria = normalizeAcceptanceCriteria(prd.acceptanceCriteria);
+export function formatPrdMarkdown(prd: PrdSkeleton, normalizedCriteria?: string[]): string {
+  // WHY: Avoids redundant re-normalization if caller has already computed the sanitized criteria list
+  const criteria = normalizedCriteria ?? normalizeAcceptanceCriteria(prd.acceptanceCriteria);
   return `## Problem Statement
 ${prd.problemStatement || 'Problem statement not specified.'}
 
@@ -76,7 +78,8 @@ ${criteria.map((c) => `- ${c}`).join('\n')}`;
  */
 export function PrdSkeletonDisplay({ prd, className = '' }: PrdSkeletonDisplayProps): React.JSX.Element {
   const criteriaList = normalizeAcceptanceCriteria(prd.acceptanceCriteria);
-  const markdownCopyText = formatPrdMarkdown(prd);
+  // WHY: Pass pre-normalized criteriaList to formatPrdMarkdown to avoid redundant normalization
+  const markdownCopyText = formatPrdMarkdown(prd, criteriaList);
 
   return (
     <section className={`prd-skeleton-card ${className}`.trim()} aria-label="PRD Skeleton Output">
