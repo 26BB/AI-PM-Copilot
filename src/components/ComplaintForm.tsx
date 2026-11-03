@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { SourceTagSelector, SourceTag } from './SourceTagSelector';
+import './ComplaintForm.css';
 
 export interface ComplaintValidationResult {
   isValid: boolean;
@@ -89,6 +90,9 @@ export function ComplaintForm({
     void onSubmit(complaintText.trim(), selectedTag);
   };
 
+  // WHY: Extract disabled state calculation to avoid repeating condition and toggle CSS classes cleanly
+  const isSubmitDisabled = disabled || isLoading || !complaintText.trim();
+
   return (
     <form onSubmit={handleSubmit} className="complaint-form" aria-label="Complaint Input Form">
       <SourceTagSelector
@@ -125,19 +129,8 @@ export function ComplaintForm({
       </div>
       <button
         type="submit"
-        disabled={disabled || isLoading || !complaintText.trim()}
-        className="submit-button"
-        style={{
-          padding: '10px 16px',
-          fontSize: '0.95rem',
-          fontWeight: 600,
-          color: '#ffffff',
-          backgroundColor: disabled || isLoading || !complaintText.trim() ? '#a0aec0' : '#3182ce',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: disabled || isLoading || !complaintText.trim() ? 'not-allowed' : 'pointer',
-          width: '100%',
-        }}
+        disabled={isSubmitDisabled}
+        className={`submit-button ${isSubmitDisabled ? 'disabled' : ''}`.trim()}
       >
         {isLoading ? 'Generating PRD...' : 'Generate PRD & RICE Score'}
       </button>
