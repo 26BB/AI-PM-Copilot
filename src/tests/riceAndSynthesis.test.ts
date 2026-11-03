@@ -1,17 +1,8 @@
 import { describe, it, expect } from 'vitest';
+import { calculateRiceScore, routeHeuristicComplaint } from '../services/riceService';
 
-export function calculateRiceScore(reach: number, impact: number, confidence: number, effort: number): number {
-  const safeEffort = Math.max(0.5, effort);
-  const score = ((reach / 1000) * impact * (confidence / 100)) / safeEffort;
-  return Math.max(0.1, Math.round(score * 10) / 10);
-}
-
-export function routeHeuristicComplaint(complaint: string): 'otp' | 'sso' | 'billing' {
-  const lower = complaint.toLowerCase();
-  if (lower.includes('sso') || lower.includes('saml') || lower.includes('okta')) return 'sso';
-  if (lower.includes('price') || lower.includes('invoice') || lower.includes('tax')) return 'billing';
-  return 'otp';
-}
+// Re-export production helpers to maintain backwards compatibility for existing imports
+export { calculateRiceScore, routeHeuristicComplaint };
 
 describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
   it('correctly calculates RICE score for standard inputs', () => {

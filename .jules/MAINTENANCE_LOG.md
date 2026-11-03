@@ -15,6 +15,15 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-11-03 — Move Production Logic from Test File to riceService
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Extracted `calculateRiceScore` and `routeHeuristicComplaint` from `src/tests/riceAndSynthesis.test.ts` into a dedicated production module `src/services/riceService.ts`.
+- 📝 Defined `ComplaintRoute` type and added JSDoc comments explaining domain mathematical logic and keyword heuristic fallback mechanisms.
+- 🔄 Re-exported helpers from `src/tests/riceAndSynthesis.test.ts` to preserve backwards compatibility for existing imports.
+- 🧹 Verified all 87 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds.
+**PR:** `chore(atlas): move production logic from test file to riceService [2026-11-03]`
+
 ### 2026-11-01 — Preserve Source Channel Tag Across Retries & Enhance Results Region A11y
 **Status:** ✅ Fixed
 **Fixed:**
