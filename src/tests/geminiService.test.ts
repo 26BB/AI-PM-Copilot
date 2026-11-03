@@ -208,6 +208,11 @@ describe('Gemini API Integration Service', () => {
     const outputUnfencedWithText = `Sure thing! Here is the JSON: ${rawJson} Hope that works!`;
     const unfencedResult = parseGeminiResponse(outputUnfencedWithText);
     expect(unfencedResult.prdSkeleton.userPersona).toBe('Data Analyst');
+
+    // WHY: LLM models sometimes place preamble text inside the markdown code fences
+    const outputWithPreambleInsideFence = `\`\`\`json\nHere is your JSON response:\n${rawJson}\nThank you!\n\`\`\``;
+    const insideFenceResult = parseGeminiResponse(outputWithPreambleInsideFence);
+    expect(insideFenceResult.prdSkeleton.problemStatement).toBe('Export to CSV fails on large datasets.');
   });
 
   /**
