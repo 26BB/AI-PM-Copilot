@@ -3,7 +3,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { AbTestDisplay, formatAbTestMetric } from '../components/AbTestDisplay';
+import { AbTestDisplay, formatAbTestMetric, formatAbTestSummaryText } from '../components/AbTestDisplay';
 import { AbTestSuggestion } from '../services/geminiService';
 
 describe('formatAbTestMetric helper logic', () => {
@@ -82,5 +82,34 @@ describe('AbTestDisplay Component', () => {
     expect(screen.getByText('Current baseline experience')).toBeDefined();
     expect(screen.getByText('Proposed solution experience')).toBeDefined();
     expect(screen.getByText('Conversion / Completion Rate')).toBeDefined();
+  });
+});
+
+describe('formatAbTestSummaryText helper logic', () => {
+  const sampleAbTest: AbTestSuggestion = {
+    hypothesis: 'Adding WhatsApp OTP option will increase flash sale conversions.',
+    controlVariant: 'Standard SMS-only OTP verification step.',
+    testVariant: 'Dual option selector allowing user to choose SMS or WhatsApp OTP delivery.',
+    successMetric: 'Flash Sale Checkout Completion Rate',
+  };
+
+  /**
+   * Real-world scenario: User copies A/B test summary where formatAbTestMetric has not been pre-computed.
+   * Expectation: Helper formats summary correctly using internal formatAbTestMetric call.
+   */
+  it('formats summary text correctly when optional pre-computed metric is omitted', () => {
+    const summary = formatAbTestSummaryText(sampleAbTest);
+    expect(summary).toContain('Primary Success Metric: Flash Sale Checkout Completion Rate');
+    expect(summary).toContain('Hypothesis: Adding WhatsApp OTP option will increase flash sale conversions.');
+  });
+
+  /**
+   * Real-world scenario: User copies A/B test summary where formatAbTestMetric was pre-computed during render.
+   * Expectation: Helper uses pre-computed metric directly without re-formatting.
+   */
+  it('formats summary text correctly when pre-computed metric is provided', () => {
+    const precomputed = 'Custom Pre-computed Metric';
+    const summary = formatAbTestSummaryText(sampleAbTest, precomputed);
+    expect(summary).toContain('Primary Success Metric: Custom Pre-computed Metric');
   });
 });
