@@ -5,6 +5,7 @@ import {
   parseGeminiResponse,
   generateProductArtifacts,
   parseNonEmptyString,
+  getGeminiApiKey,
 } from '../services/geminiService';
 
 describe('Gemini API Integration Service', () => {
@@ -17,6 +18,59 @@ describe('Gemini API Integration Service', () => {
 
   afterEach(() => {
     process.env = originalEnv;
+  });
+
+  describe('getGeminiApiKey', () => {
+    /**
+     * Real-world scenario: Production or local developer environment has GEMINI_API_KEY defined.
+     * Expectation: Retrieves the exact API key string from process.env.
+     */
+    it('returns the API key when GEMINI_API_KEY is configured in process.env', () => {
+      process.env.GEMINI_API_KEY = 'test-secret-key-12345';
+      expect(getGeminiApiKey()).toBe('test-secret-key-12345');
+    });
+
+    /**
+     * Real-world scenario: GEMINI_API_KEY is not set or undefined in the environment.
+     * Expectation: Returns undefined rather than throwing or returning an empty value.
+     */
+    it('returns undefined when GEMINI_API_KEY is undefined or deleted from process.env', () => {
+      delete process.env.GEMINI_API_KEY;
+      expect(getGeminiApiKey()).toBeUndefined();
+    });
+
+    /**
+     * Real-world scenario: GEMINI_API_KEY exists in environment but is set to an empty string.
+     * Expectation: Returns undefined because empty string is falsy and cannot be used as an API key.
+     */
+    it('returns undefined when GEMINI_API_KEY is set to an empty string', () => {
+      process.env.GEMINI_API_KEY = '';
+      expect(getGeminiApiKey()).toBeUndefined();
+    });
+
+    /**
+     * Real-world scenario: Executing in a browser, edge worker, or sandbox where process or process.env is undefined.
+     * Expectation: Gracefully handles missing process or process.env without throwing ReferenceError or TypeError.
+     */
+    it('returns undefined when process.env is undefined', () => {
+      // @ts-expect-error simulating runtime environment without process.env
+      delete process.env;
+      expect(getGeminiApiKey()).toBeUndefined();
+    });
+
+    /**
+     * Real-world scenario: Executing in an environment where the global process object itself is undefined.
+     * Expectation: Returns undefined safely without throwing ReferenceError.
+     */
+    it('returns undefined when process global is undefined', () => {
+      const originalProcess = globalThis.process;
+      try {
+        delete (globalThis as Record<string, unknown>).process;
+        expect(getGeminiApiKey()).toBeUndefined();
+      } finally {
+        globalThis.process = originalProcess;
+      }
+    });
   });
 
   /**
