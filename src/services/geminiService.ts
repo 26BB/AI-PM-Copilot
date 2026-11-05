@@ -193,19 +193,17 @@ function sanitizeAcceptanceCriteriaItem(item: unknown): string {
  * @returns Parsed AnalysisResult object with valid fallback fields if necessary
  */
 export function parseGeminiResponse(rawText: string): AnalysisResult {
-  // LLMs occasionally include conversational preambles/postambles surrounding output.
-  // First extract content inside markdown code fences if present; otherwise extract outer json object.
-  let jsonString = rawText.trim();
-
+  // WHY: LLMs occasionally include conversational preambles/postambles surrounding output,
+  // both outside and inside markdown code fences. Extracting code fence content first (if present)
+  // and then isolating the outermost '{...}' boundary ensures valid JSON parsing even if comments
+  // or chat preambles are generated within code blocks.
   const codeBlockMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  if (codeBlockMatch && codeBlockMatch[1]) {
-    jsonString = codeBlockMatch[1].trim();
-  } else {
-    const firstBrace = rawText.indexOf('{');
-    const lastBrace = rawText.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace > firstBrace) {
-      jsonString = rawText.substring(firstBrace, lastBrace + 1).trim();
-    }
+  let jsonString = (codeBlockMatch && codeBlockMatch[1]) ? codeBlockMatch[1].trim() : rawText.trim();
+
+  const firstBrace = jsonString.indexOf('{');
+  const lastBrace = jsonString.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    jsonString = jsonString.substring(firstBrace, lastBrace + 1).trim();
   }
 
   let rawParsed: unknown = {};
