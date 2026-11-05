@@ -49,6 +49,18 @@ export function LoadingSpinner({
         gap: '12px',
       }}
     >
+      {/* WHY: The app relies exclusively on inline styling with no external CSS files; injecting @keyframes spin ensures the loading spinner actually rotates in browsers while respecting accessibility reduced-motion preferences */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .spinner-ring {
+            animation: none !important;
+          }
+        }
+      `}</style>
       <div
         className="spinner-ring"
         aria-hidden="true"

@@ -15,6 +15,15 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-11-05 — Inject CSS Spin Keyframes & Accessible Reduced Motion in LoadingSpinner
+**Status:** ✅ Fixed
+**Fixed:**
+- 🎨 Injected `@keyframes spin` definition via an inline `<style>` tag in `src/components/LoadingSpinner.tsx` so the loading ring animates as intended in browsers without requiring an external CSS file.
+- ♿ Included `@media (prefers-reduced-motion: reduce)` accessibility rule in `LoadingSpinner` to respect users' vestibular motion sensitivities.
+- 🧪 Added unit test coverage in `src/tests/LoadingSpinner.test.tsx` verifying the inline `<style>` tag containing `@keyframes spin` and `prefers-reduced-motion`.
+- 🧹 Verified all 88 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): inject spin keyframes and reduced motion in loading spinner [2026-11-05]`
+
 ### 2026-11-01 — Preserve Source Channel Tag Across Retries & Enhance Results Region A11y
 **Status:** ✅ Fixed
 **Fixed:**
