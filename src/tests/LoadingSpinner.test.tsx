@@ -38,4 +38,16 @@ describe('LoadingSpinner component rendering', () => {
     render(<LoadingSpinner message="Generating PRD skeleton..." />);
     expect(screen.getByText('Generating PRD skeleton...')).toBeDefined();
   });
+
+  /**
+   * Real-world scenario: Browser renders the loading spinner during AI generation.
+   * Expectation: An inline style element defining @keyframes spin and prefers-reduced-motion is injected into the DOM.
+   */
+  it('renders inline style defining spin keyframes and reduced-motion accessibility', () => {
+    const { container } = render(<LoadingSpinner />);
+    const styleEl = container.querySelector('style');
+    expect(styleEl).not.toBeNull();
+    expect(styleEl?.textContent).toContain('@keyframes spin');
+    expect(styleEl?.textContent).toContain('prefers-reduced-motion');
+  });
 });
