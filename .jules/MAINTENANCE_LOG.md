@@ -15,6 +15,15 @@
 
 ## ✅ Completed Log (most recent first)
 
+ chore-harden-gemini-markdown-parser-7663067496487289193
+### 2026-11-03 — Harden Gemini JSON Parser Against Conversational Markdown Content
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Updated `parseGeminiResponse` in `src/services/geminiService.ts` to isolate the outermost `{...}` braces within candidate JSON strings regardless of whether they were enclosed in markdown code fences. This prevents JSON parsing failures (`Unexpected token 'H'`) when Gemini LLM outputs conversational preambles or postambles inside markdown code blocks.
+- 🧪 Added unit test coverage in `src/tests/geminiService.test.ts` verifying parsing of markdown code fences containing conversational preamble and postamble text.
+- 🧹 Verified all 87 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): harden gemini json parser against conversational markdown content [2026-11-03]`
+=======
 ### 2026-11-05 — Inject CSS Spin Keyframes & Accessible Reduced Motion in LoadingSpinner
 **Status:** ✅ Fixed
 **Fixed:**
@@ -22,7 +31,8 @@
 - ♿ Included `@media (prefers-reduced-motion: reduce)` accessibility rule in `LoadingSpinner` to respect users' vestibular motion sensitivities.
 - 🧪 Added unit test coverage in `src/tests/LoadingSpinner.test.tsx` verifying the inline `<style>` tag containing `@keyframes spin` and `prefers-reduced-motion`.
 - 🧹 Verified all 88 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
-**PR:** `chore(atlas): inject spin keyframes and reduced motion in loading spinner [2026-11-05]`
+**PR:** `chore(atlas): inject spin keyframes and reduced motion in loading spinner [2026-11-05 ] 
+ main
 
 ### 2026-11-01 — Preserve Source Channel Tag Across Retries & Enhance Results Region A11y
 **Status:** ✅ Fixed
