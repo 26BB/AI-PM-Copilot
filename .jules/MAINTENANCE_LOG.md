@@ -15,6 +15,16 @@
 
 ## ✅ Completed Log (most recent first)
 
+ refactor/move-production-logic-to-rice-service-8916541525466464472
+### 2026-11-03 — Move Production Logic from Test File to riceService
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Extracted `calculateRiceScore` and `routeHeuristicComplaint` from `src/tests/riceAndSynthesis.test.ts` into a dedicated production module `src/services/riceService.ts`.
+- 📝 Defined `ComplaintRoute` type and added JSDoc comments explaining domain mathematical logic and keyword heuristic fallback mechanisms.
+- 🔄 Re-exported helpers from `src/tests/riceAndSynthesis.test.ts` to preserve backwards compatibility for existing imports.
+- 🧹 Verified all 87 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds.
+**PR:** `chore(atlas): move production logic from test file to riceService [2026-11-03]`
+
  chore-harden-gemini-markdown-parser-7663067496487289193
 ### 2026-11-03 — Harden Gemini JSON Parser Against Conversational Markdown Content
 **Status:** ✅ Fixed
@@ -23,7 +33,7 @@
 - 🧪 Added unit test coverage in `src/tests/geminiService.test.ts` verifying parsing of markdown code fences containing conversational preamble and postamble text.
 - 🧹 Verified all 87 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
 **PR:** `chore(atlas): harden gemini json parser against conversational markdown content [2026-11-03]`
-=======
+
 ### 2026-11-05 — Inject CSS Spin Keyframes & Accessible Reduced Motion in LoadingSpinner
 **Status:** ✅ Fixed
 **Fixed:**
@@ -33,6 +43,7 @@
 - 🧹 Verified all 88 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
 **PR:** `chore(atlas): inject spin keyframes and reduced motion in loading spinner [2026-11-05 ] 
  main
+main
 
 ### 2026-11-01 — Preserve Source Channel Tag Across Retries & Enhance Results Region A11y
 **Status:** ✅ Fixed
