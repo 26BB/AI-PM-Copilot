@@ -3,7 +3,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { RiceScoreDisplay, getPriorityTier, formatRiceMetric } from '../components/RiceScoreDisplay';
+import { RiceScoreDisplay, getPriorityTier, formatRiceMetric, formatRiceSummaryText } from '../components/RiceScoreDisplay';
 import { RiceScoreReasoning } from '../services/geminiService';
 
 describe('getPriorityTier logic', () => {
@@ -126,5 +126,39 @@ describe('RiceScoreDisplay Component', () => {
     expect(
       screen.getByText('No specific reasoning provided for this RICE score calculation.')
     ).toBeDefined();
+  });
+});
+
+describe('formatRiceSummaryText helper logic', () => {
+  const sampleRice: RiceScoreReasoning = {
+    reach: 10000,
+    impact: 3.0,
+    confidence: 90,
+    effort: 2.0,
+    score: 13.5,
+    reasoning: 'Sample reasoning',
+  };
+
+  /**
+   * Real-world scenario: Formats summary text without passing an explicit priority tier.
+   * Expectation: Helper calculates the priority tier automatically via getPriorityTier fallback.
+   */
+  it('formats summary text correctly with default calculated priority tier', () => {
+    const summary = formatRiceSummaryText(sampleRice);
+    expect(summary).toContain('RICE Score: 13.5 (High Priority)');
+    expect(summary).toContain('- Reach: 10,000 users/mo');
+    expect(summary).toContain('- Impact: 3.0 (scale 0.5–3.0)');
+    expect(summary).toContain('- Confidence: 90%');
+    expect(summary).toContain('- Effort: 2 person-weeks');
+    expect(summary).toContain('Sample reasoning');
+  });
+
+  /**
+   * Real-world scenario: Formats summary text with a pre-calculated priority tier.
+   * Expectation: Helper uses the pre-calculated tier directly without recalculating.
+   */
+  it('formats summary text using provided pre-calculated priority tier', () => {
+    const summary = formatRiceSummaryText(sampleRice, 'High Priority');
+    expect(summary).toContain('RICE Score: 13.5 (High Priority)');
   });
 });

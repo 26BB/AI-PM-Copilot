@@ -58,12 +58,18 @@ export function formatRiceMetric(
 
 /**
  * Formats a RICE score breakdown into plain text suitable for copying to clipboard.
+ * Accepts an optional pre-calculated priorityTier to avoid redundant recalculation.
  *
  * @param riceScore - RiceScoreReasoning object
+ * @param priorityTier - Optional pre-calculated priority tier string
  * @returns Formatted plain text string of RICE prioritization summary
  */
-export function formatRiceSummaryText(riceScore: RiceScoreReasoning): string {
-  const tier = getPriorityTier(riceScore.score);
+export function formatRiceSummaryText(
+  riceScore: RiceScoreReasoning,
+  priorityTier?: 'High Priority' | 'Medium Priority' | 'Low Priority'
+): string {
+  // WHY: Accept pre-calculated priorityTier or fall back to calculating it if not provided
+  const tier = priorityTier ?? getPriorityTier(riceScore.score);
   return `RICE Score: ${formatRiceMetric(riceScore.score, 'score')} (${tier})
 - Reach: ${formatRiceMetric(riceScore.reach, 'reach')}
 - Impact: ${formatRiceMetric(riceScore.impact, 'impact')}
@@ -84,7 +90,8 @@ ${riceScore.reasoning || 'No specific reasoning provided.'}`;
 export function RiceScoreDisplay({ riceScore, className = '' }: RiceScoreDisplayProps): React.JSX.Element {
   const priorityTier = getPriorityTier(riceScore.score);
   const tierClass = priorityTier.toLowerCase().replace(' ', '-');
-  const copySummaryText = formatRiceSummaryText(riceScore);
+  // WHY: Reusing pre-calculated priorityTier prevents redundant getPriorityTier invocation
+  const copySummaryText = formatRiceSummaryText(riceScore, priorityTier);
 
   return (
     <section className={`rice-score-card ${className}`.trim()} aria-label="RICE Priority Score Output" style={{ marginTop: '20px' }}>
