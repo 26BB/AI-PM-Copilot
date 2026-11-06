@@ -229,4 +229,23 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('Discrepancy in tier pricing observed in attached invoice_summary.pdf');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Corrupted or Non-Finite RICE Metric Inputs
+   * When calculations receive non-finite numbers (NaN, Infinity, -Infinity),
+   * calculateRiceScore safely sanitizes the metrics to prevent NaN propagation and returns a valid finite score floor.
+   */
+  it('handles non-finite inputs (NaN, Infinity, -Infinity) gracefully without returning NaN', () => {
+    const nanScore = calculateRiceScore(NaN, 2.0, 80, 2.0);
+    expect(nanScore).toBe(0.1);
+    expect(Number.isFinite(nanScore)).toBe(true);
+
+    const infScore = calculateRiceScore(1000, Infinity, 80, 2.0);
+    expect(infScore).toBe(0.1);
+    expect(Number.isFinite(infScore)).toBe(true);
+
+    const nanEffortScore = calculateRiceScore(5000, 2.0, 80, NaN);
+    expect(nanEffortScore).toBe(16.0);
+    expect(Number.isFinite(nanEffortScore)).toBe(true);
+  });
 });
