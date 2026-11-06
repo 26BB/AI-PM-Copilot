@@ -133,4 +133,22 @@ describe('ComplaintForm Component', () => {
     fireEvent.submit(form);
     expect(handleSubmit).not.toHaveBeenCalled();
   });
+
+  /**
+   * Real-world scenario: PM interacts with the complaint input form and toggles between empty and filled states.
+   * Expectation: Submit button toggles the 'disabled' class name and HTML disabled attribute accordingly.
+   */
+  it('toggles disabled CSS class on submit button based on input validity and state', () => {
+    render(<ComplaintForm onSubmit={() => {}} />);
+
+    const submitBtn = screen.getByRole('button', { name: /generate prd/i });
+    expect(submitBtn.className).toContain('submit-button');
+    expect(submitBtn.className).toContain('disabled');
+
+    const textarea = screen.getByRole('textbox', { name: /raw user complaint/i });
+    fireEvent.change(textarea, { target: { value: 'Valid complaint text for PRD generation' } });
+
+    expect(submitBtn.className).toBe('submit-button');
+    expect(submitBtn.hasAttribute('disabled')).toBe(false);
+  });
 });

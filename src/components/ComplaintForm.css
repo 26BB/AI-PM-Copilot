@@ -1,0 +1,17 @@
+.submit-button {
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #3182ce;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.submit-button:disabled,
+.submit-button.disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
