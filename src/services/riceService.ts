@@ -16,9 +16,15 @@ export type ComplaintRoute = 'otp' | 'sso' | 'billing';
  * @returns RICE score rounded to 1 decimal place, bounded to a minimum of 0.1
  */
 export function calculateRiceScore(reach: number, impact: number, confidence: number, effort: number): number {
-  // Clamps effort to a minimum floor of 0.5 to prevent division by zero or inflated scores
-  const safeEffort = Math.max(0.5, effort);
-  const score = ((reach / 1000) * impact * (confidence / 100)) / safeEffort;
+  // WHY: Non-finite inputs (NaN, Infinity, -Infinity) or unvalidated values cause Math operations
+  // to yield NaN or infinite scores. Enforcing finite numbers and safe bounds ensures deterministic
+  // priority ranking without corrupting sorting matrices or crashing frontend UI displays.
+  const safeReach = Number.isFinite(reach) ? Math.max(0, reach) : 0;
+  const safeImpact = Number.isFinite(impact) ? Math.max(0, impact) : 0;
+  const safeConfidence = Number.isFinite(confidence) ? Math.max(0, confidence) : 0;
+  const safeEffort = Number.isFinite(effort) ? Math.max(0.5, effort) : 0.5;
+
+  const score = ((safeReach / 1000) * safeImpact * (safeConfidence / 100)) / safeEffort;
   return Math.max(0.1, Math.round(score * 10) / 10);
 }
 

@@ -15,7 +15,14 @@
 
 ## ✅ Completed Log (most recent first)
 
- refactor/move-production-logic-to-rice-service-8916541525466464472
+### 2026-11-06 — Sanitize Non-Finite and Negative Numeric Inputs in calculateRiceScore
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Hardened `calculateRiceScore` in `src/services/riceService.ts` using `Number.isFinite()` and non-negative metric clamping (`Math.max(0, val)`) for reach, impact, and confidence, and default 0.5 minimum floor for effort. This prevents `NaN` and `Infinity` from propagating into RICE score rankings and frontend components.
+- 🧪 Added comprehensive unit test coverage in `src/tests/riceAndSynthesis.test.ts` verifying that passing `NaN`, `Infinity`, or non-finite effort returns a safe, finite RICE score floor without throwing errors or returning `NaN`.
+- 🧹 Verified all 89 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): sanitize non-finite inputs in calculateRiceScore [2026-11-06]`
+
 ### 2026-11-03 — Move Production Logic from Test File to riceService
 **Status:** ✅ Fixed
 **Fixed:**
