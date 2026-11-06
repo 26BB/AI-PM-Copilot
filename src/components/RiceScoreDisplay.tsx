@@ -10,6 +10,37 @@ export interface RiceScoreDisplayProps {
 }
 
 /**
+ * Shared styling tokens for RICE metric grid items and labels to eliminate inline duplication.
+ */
+// WHY: Centralizing metric item styles reduces inline style duplication and ensures visual consistency across metrics
+const metricStyles: {
+  grid: React.CSSProperties;
+  item: React.CSSProperties;
+  label: React.CSSProperties;
+  value: React.CSSProperties;
+} = {
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+    gap: '12px',
+    margin: '16px 0',
+  },
+  item: {
+    padding: '8px',
+    background: '#f7fafc',
+    border: '1px solid #e2e8f0',
+    borderRadius: '4px',
+  },
+  label: {
+    fontSize: '0.85rem',
+    color: '#4a5568',
+  },
+  value: {
+    fontWeight: '600',
+  },
+};
+
+/**
  * Categorizes a numeric RICE score into a human-readable priority tier.
  *
  * @param score - Calculated RICE score
@@ -86,6 +117,17 @@ export function RiceScoreDisplay({ riceScore, className = '' }: RiceScoreDisplay
   const tierClass = priorityTier.toLowerCase().replace(' ', '-');
   const copySummaryText = formatRiceSummaryText(riceScore);
 
+  const metricsConfig: Array<{
+    label: string;
+    type: 'reach' | 'impact' | 'confidence' | 'effort';
+    value: number;
+  }> = [
+    { label: 'Reach:', type: 'reach', value: riceScore.reach },
+    { label: 'Impact:', type: 'impact', value: riceScore.impact },
+    { label: 'Confidence:', type: 'confidence', value: riceScore.confidence },
+    { label: 'Effort:', type: 'effort', value: riceScore.effort },
+  ];
+
   return (
     <section className={`rice-score-card ${className}`.trim()} aria-label="RICE Priority Score Output" style={{ marginTop: '20px' }}>
       <header className="rice-score-header" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -105,26 +147,13 @@ export function RiceScoreDisplay({ riceScore, className = '' }: RiceScoreDisplay
       </header>
 
       <div className="rice-score-body">
-        <div className="rice-metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', margin: '16px 0' }}>
-          <div className="rice-metric-item" style={{ padding: '8px', background: '#f7fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-            <div className="metric-label" style={{ fontSize: '0.85rem', color: '#4a5568' }}>Reach:</div>
-            <div className="metric-value" style={{ fontWeight: '600' }}>{formatRiceMetric(riceScore.reach, 'reach')}</div>
-          </div>
-
-          <div className="rice-metric-item" style={{ padding: '8px', background: '#f7fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-            <div className="metric-label" style={{ fontSize: '0.85rem', color: '#4a5568' }}>Impact:</div>
-            <div className="metric-value" style={{ fontWeight: '600' }}>{formatRiceMetric(riceScore.impact, 'impact')}</div>
-          </div>
-
-          <div className="rice-metric-item" style={{ padding: '8px', background: '#f7fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-            <div className="metric-label" style={{ fontSize: '0.85rem', color: '#4a5568' }}>Confidence:</div>
-            <div className="metric-value" style={{ fontWeight: '600' }}>{formatRiceMetric(riceScore.confidence, 'confidence')}</div>
-          </div>
-
-          <div className="rice-metric-item" style={{ padding: '8px', background: '#f7fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-            <div className="metric-label" style={{ fontSize: '0.85rem', color: '#4a5568' }}>Effort:</div>
-            <div className="metric-value" style={{ fontWeight: '600' }}>{formatRiceMetric(riceScore.effort, 'effort')}</div>
-          </div>
+        <div className="rice-metrics-grid" style={metricStyles.grid}>
+          {metricsConfig.map((metric) => (
+            <div key={metric.type} className="rice-metric-item" style={metricStyles.item}>
+              <div className="metric-label" style={metricStyles.label}>{metric.label}</div>
+              <div className="metric-value" style={metricStyles.value}>{formatRiceMetric(metric.value, metric.type)}</div>
+            </div>
+          ))}
         </div>
 
         <div className="rice-reasoning-section" style={{ marginTop: '16px' }}>
