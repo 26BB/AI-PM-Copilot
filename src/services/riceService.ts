@@ -16,9 +16,15 @@ export type ComplaintRoute = 'otp' | 'sso' | 'billing';
  * @returns RICE score rounded to 1 decimal place, bounded to a minimum of 0.1
  */
 export function calculateRiceScore(reach: number, impact: number, confidence: number, effort: number): number {
-  // Clamps effort to a minimum floor of 0.5 to prevent division by zero or inflated scores
-  const safeEffort = Math.max(0.5, effort);
-  const score = ((reach / 1000) * impact * (confidence / 100)) / safeEffort;
+  // WHY: Non-finite inputs (NaN, Infinity, undefined) from malformed data sources or unvalidated inputs
+  // propagate through arithmetic operations and yield NaN or Infinity, corrupting PM ranking matrices.
+  // Validating Number.isFinite guarantees mathematical determinism and avoids breaking UI displays.
+  const safeReach = typeof reach === 'number' && Number.isFinite(reach) ? Math.max(0, reach) : 0;
+  const safeImpact = typeof impact === 'number' && Number.isFinite(impact) ? Math.max(0, impact) : 0;
+  const safeConfidence = typeof confidence === 'number' && Number.isFinite(confidence) ? Math.max(0, confidence) : 0;
+  const safeEffort = typeof effort === 'number' && Number.isFinite(effort) ? Math.max(0.5, effort) : 0.5;
+
+  const score = ((safeReach / 1000) * safeImpact * (safeConfidence / 100)) / safeEffort;
   return Math.max(0.1, Math.round(score * 10) / 10);
 }
 
@@ -27,11 +33,16 @@ export function calculateRiceScore(reach: number, impact: number, confidence: nu
  *
  * WHY: Heuristic routing provides an immediate fallback classification before or alongside
  * LLM synthesis, enabling deterministic fallback handling in offline or high-latency scenarios.
+ * Guarding against non-string/nullish complaint inputs prevents unhandled TypeError exceptions
+ * when calling .toLowerCase() on unvalidated feedback payloads.
  *
  * @param complaint - Raw complaint or user feedback text
  * @returns Classified complaint route category ('sso' | 'billing' | 'otp')
  */
 export function routeHeuristicComplaint(complaint: string): ComplaintRoute {
+  if (typeof complaint !== 'string' || !complaint.trim()) {
+    return 'otp';
+  }
   const lower = complaint.toLowerCase();
   if (lower.includes('sso') || lower.includes('saml') || lower.includes('okta')) return 'sso';
   if (lower.includes('price') || lower.includes('invoice') || lower.includes('tax')) return 'billing';

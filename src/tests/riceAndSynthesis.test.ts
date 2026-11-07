@@ -229,4 +229,43 @@ describe('AI-PM Copilot Core Math & Routing (Beyoncé Rule)', () => {
     const route = routeHeuristicComplaint('Discrepancy in tier pricing observed in attached invoice_summary.pdf');
     expect(route).toBe('billing');
   });
+
+  /**
+   * Real-World Scenario: Corrupted or Non-Finite Numeric Metrics in RICE Calculation
+   * When data ingest pipelines or user inputs provide NaN, Infinity, or non-numeric types,
+   * calculateRiceScore must safely sanitize inputs and return a valid finite score clamped to the floor (0.1).
+   */
+  it('safely handles non-finite numbers (NaN, Infinity, undefined) in RICE score calculation', () => {
+    // Non-finite reach, impact, or confidence defaults safely to 0, producing minimum score floor 0.1
+    expect(calculateRiceScore(NaN, 2.0, 80, 2.0)).toBe(0.1);
+    expect(calculateRiceScore(1000, NaN, 80, 2.0)).toBe(0.1);
+    expect(calculateRiceScore(1000, 2.0, NaN, 2.0)).toBe(0.1);
+    expect(calculateRiceScore(Infinity, 2.0, 80, 2.0)).toBe(0.1);
+    expect(calculateRiceScore(1000, Infinity, 80, 2.0)).toBe(0.1);
+
+    // Non-finite effort (NaN or Infinity) defaults safely to safe minimum effort (0.5), yielding finite score
+    const nanEffortScore = calculateRiceScore(1000, 2.0, 80, NaN);
+    expect(nanEffortScore).toBe(3.2);
+    expect(Number.isFinite(nanEffortScore)).toBe(true);
+
+    const infEffortScore = calculateRiceScore(1000, 2.0, 80, Infinity);
+    expect(infEffortScore).toBe(3.2);
+    expect(Number.isFinite(infEffortScore)).toBe(true);
+  });
+
+  /**
+   * Real-World Scenario: Nullish or Non-String Inputs to Complaint Heuristic Router
+   * When raw webhook payloads or unvalidated inputs pass null, undefined, or empty/whitespace strings
+   * into routeHeuristicComplaint, the router must safely return the fallback 'otp' route without throwing TypeError.
+   */
+  it('handles nullish, empty, and non-string complaint inputs safely without throwing', () => {
+    // @ts-expect-error - testing runtime resilience against invalid inputs
+    expect(routeHeuristicComplaint(null)).toBe('otp');
+    // @ts-expect-error - testing runtime resilience against invalid inputs
+    expect(routeHeuristicComplaint(undefined)).toBe('otp');
+    expect(routeHeuristicComplaint('')).toBe('otp');
+    expect(routeHeuristicComplaint('    ')).toBe('otp');
+    // @ts-expect-error - testing runtime resilience against invalid inputs
+    expect(routeHeuristicComplaint(12345)).toBe('otp');
+  });
 });
