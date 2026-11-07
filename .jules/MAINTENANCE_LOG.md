@@ -15,6 +15,15 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-11-07 — Harden RICE Calculation & Heuristic Routing Against Non-Finite & Malformed Inputs
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Hardened `calculateRiceScore` in `src/services/riceService.ts` to validate all input metrics (`reach`, `impact`, `confidence`, `effort`) using `Number.isFinite`. Non-finite or missing numeric inputs (`NaN`, `Infinity`, `undefined`) are safely sanitized to non-negative defaults (effort clamped to minimum `0.5`), preventing `NaN` and `Infinity` from corrupting PM ranking matrices and UI metrics.
+- 🛡️ Hardened `routeHeuristicComplaint` in `src/services/riceService.ts` with type-safe guards to check for non-empty string input before calling `.toLowerCase()`, preventing unhandled `TypeError: Cannot read properties of null/undefined` exceptions on unvalidated feedback payloads and cleanly defaulting to the `'otp'` fallback route.
+- 🧪 Added comprehensive unit test coverage in `src/tests/riceAndSynthesis.test.ts` testing `calculateRiceScore` with `NaN` and `Infinity` inputs across all parameters, and `routeHeuristicComplaint` with `null`, `undefined`, empty, whitespace-only, and non-string inputs.
+- 🧹 Verified all 90 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): harden rice calculation and heuristic routing against non-finite inputs [2026-11-07]`
+
  refactor/move-production-logic-to-rice-service-8916541525466464472
 ### 2026-11-03 — Move Production Logic from Test File to riceService
 **Status:** ✅ Fixed
