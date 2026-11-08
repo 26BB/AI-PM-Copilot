@@ -18,6 +18,18 @@ describe('ErrorMessage helper functions', () => {
     const errorObj = new Error('Network failure during fetch');
     expect(formatErrorMessage(errorObj)).toBe('Network failure during fetch');
   });
+
+  /**
+   * Tests formatErrorMessage with non-Error objects, null, undefined, or primitives.
+   */
+  it('safely extracts message or error strings from custom objects and falls back gracefully', () => {
+    expect(formatErrorMessage({ message: 'Rate limit error' })).toBe('Rate limit error');
+    expect(formatErrorMessage({ error: 'Unauthorized key' })).toBe('Unauthorized key');
+    expect(formatErrorMessage(null)).toBe('An unexpected error occurred. Please try again.');
+    expect(formatErrorMessage(undefined)).toBe('An unexpected error occurred. Please try again.');
+    expect(formatErrorMessage(12345)).toBe('An unexpected error occurred. Please try again.');
+    expect(formatErrorMessage({})).toBe('An unexpected error occurred. Please try again.');
+  });
 });
 
 describe('ErrorMessage component rendering', () => {

@@ -1,8 +1,8 @@
 import React from 'react';
 
 export interface ErrorMessageProps {
-  /** Error message string or Error instance to display */
-  error: string | Error;
+  /** Error message string, Error instance, or unknown caught exception object to display */
+  error: string | Error | unknown;
   /** Optional callback fired when the user clicks the Retry button */
   onRetry?: () => void;
   /** Custom label for the retry action button */
@@ -12,17 +12,28 @@ export interface ErrorMessageProps {
 }
 
 /**
- * Normalizes error inputs (Error objects or strings) into a sanitized error string.
+ * Normalizes error inputs (Error objects, strings, API error payloads, or unknown values) into a sanitized error string.
  *
- * @param err - Raw error object or string
+ * WHY: Async rejected promises, API responses, or catch blocks often receive non-Error objects
+ * (e.g. `{ message: '...' }`, `{ error: '...' }`, raw strings, or null/undefined).
+ * Normalizing unknown inputs safely prevents runtime TypeError crashes and ensures the UI always
+ * displays a coherent, user-facing error message.
+ *
+ * @param err - Raw error object, string, or unknown exception value
  * @returns Cleaned, user-facing error message text
  */
-export function formatErrorMessage(err: string | Error): string {
+export function formatErrorMessage(err: unknown): string {
   if (typeof err === 'string') {
     return err.trim() || 'An unexpected error occurred. Please try again.';
   }
-  if (err && err.message && err.message.trim()) {
-    return err.message.trim();
+  if (err && typeof err === 'object') {
+    const candidate = err as Record<string, unknown>;
+    if (typeof candidate.message === 'string' && candidate.message.trim()) {
+      return candidate.message.trim();
+    }
+    if (typeof candidate.error === 'string' && candidate.error.trim()) {
+      return candidate.error.trim();
+    }
   }
   return 'An unexpected error occurred. Please try again.';
 }

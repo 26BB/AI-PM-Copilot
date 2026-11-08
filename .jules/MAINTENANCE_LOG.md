@@ -15,6 +15,14 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-11-08 — Harden ErrorMessage Against Malformed and Non-Error Exception Objects
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Hardened `formatErrorMessage` and `ErrorMessageProps` in `src/components/ErrorMessage.tsx` to safely accept and normalize `unknown` error inputs (including `Error` instances, plain error payload objects with `message` or `error` properties, `null`, `undefined`, and non-string primitives). This prevents runtime `TypeError` crashes when rendering rejected promises or non-standard API exception objects.
+- 🧪 Added unit test coverage in `src/tests/ErrorMessage.test.tsx` verifying `formatErrorMessage` safely extracts message/error strings from custom payload objects and falls back gracefully on null, undefined, or primitive values.
+- 🧹 Verified all 91 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): harden ErrorMessage against malformed error objects [2026-11-08]`
+
 ### 2026-11-07 — Harden RICE Calculation & Heuristic Routing Against Non-Finite & Malformed Inputs
 **Status:** ✅ Fixed
 **Fixed:**
