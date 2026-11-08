@@ -1,0 +1,83 @@
+/* Hallmark stamp: ai-pm-copilot-light v1.0.0 | light-minimal | porcelain-cobalt */
+:root {
+  /* Surfaces & Bedrock Canvas (Light Porcelain Hierarchy) */
+  --canvas: #F8FAFC;
+  --surface-card: #FFFFFF;
+  --surface-subtle: #F1F5F9;
+  --surface-hover: #E2E8F0;
+  --surface-active: #CBD5E1;
+
+  /* Architectural Hairlines */
+  --border-hairline: #E2E8F0;
+  --border-hairline-strong: #CBD5E1;
+  --border-focus: #2563EB;
+
+  /* Typography Colors */
+  --text-high: #0F172A;
+  --text-med: #334155;
+  --text-muted: #64748B;
+  --text-inverse: #FFFFFF;
+
+  /* Primary Accent: Cobalt Workstation */
+  --accent-primary: #2563EB;
+  --accent-primary-hover: #1D4ED8;
+  --accent-primary-active: #1E40AF;
+  --accent-surface: #EFF6FF;
+  --accent-border: #BFDBFE;
+  --accent-text: #1E40AF;
+
+  /* Semantic Feedback Tints */
+  --emerald-surface: #F0FDF4;
+  --emerald-border: #BBF7D0;
+  --emerald-text: #15803D;
+
+  --amber-surface: #FFFBEB;
+  --amber-border: #FDE68A;
+  --amber-text: #92400E;
+
+  --rose-surface: #FEF2F2;
+  --rose-border: #FECACA;
+  --rose-text: #991B1B;
+
+  /* Font Families */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-elevated: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--canvas);
+  color: var(--text-high);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hallmark Floor: Focus-visible standard */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion Fallbacks */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

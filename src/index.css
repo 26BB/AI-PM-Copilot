@@ -1,0 +1,622 @@
+/* Hallmark stamp: ai-pm-copilot-styles v1.0.0 | component-architecture */
+@import './tokens.css';
+
+/* Main App Container */
+.app-container {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 24px 16px;
+  min-height: 100vh;
+}
+
+.app-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.app-title {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-high);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.app-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-med);
+}
+
+/* Source Tag Selector */
+.source-tag-container {
+  margin-bottom: 16px;
+}
+
+.source-tag-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-high);
+  margin-bottom: 8px;
+}
+
+.source-tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.source-tag-chip {
+  padding: 6px 12px;
+  font-size: 0.825rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-hairline);
+  background-color: var(--surface-card);
+  color: var(--text-med);
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.source-tag-chip:hover:not(:disabled) {
+  background-color: var(--surface-subtle);
+  border-color: var(--border-hairline-strong);
+  color: var(--text-high);
+}
+
+.source-tag-chip.active {
+  background-color: var(--accent-surface);
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.source-tag-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Complaint Form */
+.complaint-form {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-high);
+}
+
+.form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  font-size: 0.925rem;
+  line-height: 1.5;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-hairline-strong);
+  background-color: var(--surface-card);
+  color: var(--text-high);
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.form-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.character-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.error-message {
+  color: var(--rose-text);
+  font-weight: 500;
+}
+
+/* Buttons */
+.submit-button {
+  padding: 11px 18px;
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--text-inverse);
+  background-color: var(--accent-primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 150ms ease, border-color 150ms ease, transform 100ms ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: var(--accent-primary-hover);
+}
+
+.submit-button:active:not(:disabled) {
+  background-color: var(--accent-primary-active);
+  transform: translateY(1px);
+}
+
+.submit-button:disabled {
+  background-color: #94A3B8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Copy Button */
+.copy-button {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-hairline);
+  background-color: var(--surface-subtle);
+  color: var(--text-med);
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 100ms ease;
+}
+
+.copy-button:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+  color: var(--text-high);
+  border-color: var(--border-hairline-strong);
+}
+
+.copy-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.copy-button.copied {
+  background-color: var(--emerald-surface);
+  color: var(--emerald-text);
+  border-color: var(--emerald-border);
+}
+
+.copy-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Loading & Status */
+.loading-spinner-container {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 24px;
+}
+
+.spinner-ring {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 0.9rem;
+  color: var(--text-med);
+  margin: 0;
+}
+
+/* Error Banner */
+.error-message-banner {
+  padding: 16px;
+  background-color: var(--rose-surface);
+  border: 1px solid var(--rose-border);
+  border-radius: var(--radius-md);
+  color: var(--rose-text);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.error-text {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.retry-button {
+  align-self: flex-start;
+  padding: 6px 12px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  background-color: #FFFFFF;
+  border: 1px solid var(--rose-border);
+  color: var(--rose-text);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.retry-button:hover {
+  background-color: #FEE2E2;
+}
+
+/* Context Banner */
+.submitted-context-banner {
+  padding: 14px 16px;
+  background-color: var(--accent-surface);
+  border: 1px solid var(--accent-border);
+  margin-bottom: 20px;
+  border-radius: var(--radius-md);
+  word-break: break-word;
+  font-size: 0.875rem;
+  color: var(--accent-text);
+}
+
+.context-row {
+  margin-bottom: 4px;
+}
+
+/* Artifact Output Cards */
+.prd-skeleton-card,
+.rice-score-card,
+.ab-test-card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 20px;
+}
+
+.prd-skeleton-header,
+.rice-score-header,
+.ab-test-header {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-hairline);
+  padding-bottom: 12px;
+}
+
+.prd-skeleton-title,
+.rice-score-title,
+.ab-test-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-high);
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+/* PRD Skeleton Interior */
+.prd-section {
+  margin-bottom: 16px;
+}
+
+.prd-section:last-child {
+  margin-bottom: 0;
+}
+
+.prd-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 6px 0;
+}
+
+.prd-section-content {
+  font-size: 0.925rem;
+  line-height: 1.6;
+  color: var(--text-med);
+  margin: 0;
+}
+
+.prd-user-story-quote {
+  margin: 0;
+  padding: 10px 14px;
+  background-color: var(--surface-subtle);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.925rem;
+  line-height: 1.5;
+  color: var(--text-high);
+  font-style: normal;
+}
+
+.prd-criteria-list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-med);
+  font-size: 0.925rem;
+  line-height: 1.6;
+}
+
+.prd-criteria-item {
+  margin-bottom: 4px;
+}
+
+/* RICE Card Interior */
+.rice-badge-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.875rem;
+}
+
+.rice-score-badge {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.priority-tier-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.775rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.priority-high-priority {
+  background-color: var(--emerald-surface);
+  color: var(--emerald-text);
+  border: 1px solid var(--emerald-border);
+}
+
+.priority-medium-priority {
+  background-color: var(--amber-surface);
+  color: var(--amber-text);
+  border: 1px solid var(--amber-border);
+}
+
+.priority-low-priority {
+  background-color: var(--surface-subtle);
+  color: var(--text-muted);
+  border: 1px solid var(--border-hairline);
+}
+
+.rice-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.rice-metric-item {
+  padding: 10px 12px;
+  background-color: var(--surface-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+}
+
+.metric-label {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 0.925rem;
+  color: var(--text-high);
+}
+
+.rice-reasoning-section {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.rice-reasoning-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0 0 6px 0;
+}
+
+.rice-reasoning-content {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-med);
+  margin: 0;
+}
+
+/* A/B Test Card Interior */
+.ab-test-section {
+  margin-bottom: 16px;
+}
+
+.ab-test-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0 0 6px 0;
+}
+
+.ab-test-section-content {
+  font-size: 0.925rem;
+  line-height: 1.6;
+  color: var(--text-med);
+  margin: 0;
+}
+
+.ab-test-variants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ab-test-variant-item {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-hairline);
+}
+
+.ab-test-variant-item.control-variant {
+  background-color: var(--surface-subtle);
+}
+
+.ab-test-variant-item.test-variant {
+  background-color: var(--emerald-surface);
+  border-color: var(--emerald-border);
+}
+
+.variant-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.control-variant .variant-label {
+  color: var(--text-muted);
+}
+
+.test-variant .variant-label {
+  color: var(--emerald-text);
+}
+
+.variant-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-high);
+}
+
+.ab-test-section.metric-section {
+  background-color: var(--accent-surface);
+  border: 1px solid var(--accent-border);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ab-test-section.metric-section .metric-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-text);
+}
+
+.ab-test-section.metric-section .metric-value {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--accent-text);
+}
+
+
+/* ==========================================================================
+   Hallmark & Impeccable Mobile Responsive Hardening (<= 640px)
+   ========================================================================== */
+@media (max-width: 640px) {
+  .app-container {
+    padding: 16px 12px !important;
+  }
+
+  .app-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .app-title {
+    font-size: 1.5rem !important;
+  }
+
+  .app-subtitle {
+    font-size: 0.875rem !important;
+  }
+
+  .complaint-form {
+    padding: 16px 12px !important;
+    margin-bottom: 16px;
+  }
+
+  .form-textarea {
+    font-size: 16px !important; /* Prevents iOS auto-zoom on focus */
+    padding: 10px 12px;
+  }
+
+  .source-tag-chip {
+    padding: 8px 12px !important; /* Min tap target enhancement */
+    font-size: 0.8rem !important;
+  }
+
+  .submit-button {
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .prd-skeleton-card,
+  .rice-score-card,
+  .ab-test-card {
+    padding: 16px 12px !important;
+    margin-bottom: 16px;
+  }
+
+  .prd-skeleton-header,
+  .rice-score-header,
+  .ab-test-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start !important;
+  }
+
+  .rice-badge-container {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .rice-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .ab-test-variants-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .submitted-context-banner {
+    padding: 12px !important;
+    font-size: 0.85rem !important;
+  }
+}

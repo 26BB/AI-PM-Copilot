@@ -96,8 +96,8 @@ export function ComplaintForm({
         onSelectTag={setSelectedTag}
         disabled={disabled || isLoading}
       />
-      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-        <label htmlFor="complaint-input" className="form-label" style={{ fontWeight: 600, fontSize: '0.9rem', color: '#2d3748' }}>
+      <div className="form-group">
+        <label htmlFor="complaint-input" className="form-label">
           Raw User Complaint or Feedback
         </label>
         <textarea
@@ -110,14 +110,13 @@ export function ComplaintForm({
           className="form-textarea"
           aria-invalid={Boolean(validationError)}
           aria-describedby={validationError ? 'complaint-error' : undefined}
-          style={{ width: '100%', boxSizing: 'border-box', padding: '10px', fontSize: '0.9rem', borderRadius: '6px', border: '1px solid #cbd5e0', fontFamily: 'inherit' }}
         />
-        <div className="form-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', color: '#718096' }}>
+        <div className="form-footer">
           <span className="character-count" aria-live="polite">
             {complaintText.length} characters
           </span>
           {validationError && (
-            <span id="complaint-error" className="error-message" role="alert" style={{ color: '#e53e3e', fontWeight: 500 }}>
+            <span id="complaint-error" className="error-message" role="alert">
               {validationError}
             </span>
           )}
@@ -127,17 +126,6 @@ export function ComplaintForm({
         type="submit"
         disabled={disabled || isLoading || !complaintText.trim()}
         className="submit-button"
-        style={{
-          padding: '10px 16px',
-          fontSize: '0.95rem',
-          fontWeight: 600,
-          color: '#ffffff',
-          backgroundColor: disabled || isLoading || !complaintText.trim() ? '#a0aec0' : '#3182ce',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: disabled || isLoading || !complaintText.trim() ? 'not-allowed' : 'pointer',
-          width: '100%',
-        }}
       >
         {isLoading ? 'Generating PRD...' : 'Generate PRD & RICE Score'}
       </button>

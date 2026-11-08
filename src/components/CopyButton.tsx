@@ -81,7 +81,7 @@ export function CopyButton({
 
     const success = await copyToClipboard(textToCopy);
     if (success) {
-      // WHY: Clear any prior pending reset timeout before scheduling a new one so fast repeated clicks extend feedback duration properly
+      // Clear any prior pending reset timeout before scheduling a new one so fast repeated clicks extend feedback duration properly
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
       }
@@ -104,16 +104,6 @@ export function CopyButton({
       aria-label={isCopied ? copiedLabel : label}
       title={label}
       disabled={!textToCopy}
-      style={{
-        cursor: textToCopy ? 'pointer' : 'not-allowed',
-        padding: '4px 8px',
-        fontSize: '0.85rem',
-        borderRadius: '4px',
-        border: '1px solid #cbd5e0',
-        backgroundColor: isCopied ? '#c6f6d5' : '#edf2f7',
-        color: isCopied ? '#22543d' : '#2d3748',
-        transition: 'all 0.2s ease-in-out',
-      }}
     >
       {isCopied ? `✓ ${copiedLabel}` : `📋 ${label}`}
     </button>

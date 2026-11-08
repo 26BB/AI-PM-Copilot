@@ -15,6 +15,14 @@
 
 ---
 
+## 📸 Product Preview
+
+[![AI-PM Copilot Live Application](./docs/screenshots/live-preview.png)](https://ai-pm-copilot-two.vercel.app)
+
+*Live application interface: turning raw user feedback into structured PRDs, mathematical RICE priority scores, and A/B test experiments in under 60 seconds.*
+
+---
+
 ## ⚡ What Is This?
 
 **AI-PM Copilot** is a lightweight, AI-powered web tool that helps Product Managers turn raw user feedback into structured product artifacts in under 60 seconds.

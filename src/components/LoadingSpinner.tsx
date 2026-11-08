@@ -67,23 +67,14 @@ export function LoadingSpinner({
         style={{
           width: `${size}px`,
           height: `${size}px`,
-          border: '3px solid #e2e8f0',
-          borderTopColor: '#3182ce',
+          border: '3px solid var(--border-hairline, #E2E8F0)',
+          borderTopColor: 'var(--accent-primary, #2563EB)',
           borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite',
         }}
       />
-      <p
-        className="spinner-message"
-        style={{
-          margin: 0,
-          fontSize: '0.95rem',
-          color: '#4a5568',
-          fontWeight: 500,
-        }}
-      >
+      <span className="loading-text" style={{ fontSize: '0.9rem', color: 'var(--text-med, #334155)', margin: 0 }}>
         {displayMessage}
-      </p>
+      </span>
     </div>
   );
 }

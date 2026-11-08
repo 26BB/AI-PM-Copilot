@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
+import './index.css';
 import { ComplaintForm } from './components/ComplaintForm';
 import { SourceTag } from './components/SourceTagSelector';
 import { PrdSkeletonDisplay } from './components/PrdSkeletonDisplay';
@@ -51,17 +52,12 @@ export function App(): React.JSX.Element {
       style={{
         maxWidth: '720px',
         width: '100%',
-        margin: '0 auto',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-        padding: '16px',
         boxSizing: 'border-box',
       }}
     >
-      <header className="app-header" style={{ marginBottom: '20px', textAlign: 'left' }}>
-        <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.25rem)', margin: '0 0 8px 0', color: '#1a202c' }}>
-          AI-PM Copilot
-        </h1>
-        <p style={{ margin: 0, fontSize: '0.95rem', color: '#4a5568' }}>
+      <header className="app-header">
+        <h1 className="app-title">AI-PM Copilot</h1>
+        <p className="app-subtitle">
           Paste a raw user complaint to generate a PRD skeleton, RICE priority score, and A/B test suggestion in seconds.
         </p>
       </header>
@@ -90,20 +86,11 @@ export function App(): React.JSX.Element {
           >
             <div
               className="submitted-context-banner"
-              style={{
-                padding: '12px 16px',
-                background: '#e6fffa',
-                border: '1px solid #319795',
-                marginBottom: '20px',
-                borderRadius: '8px',
-                wordBreak: 'break-word',
-                fontSize: '0.9rem',
-              }}
             >
-              <div style={{ marginBottom: '4px' }}>
+              <div className="context-row">
                 <strong>Source Channel:</strong> {selectedSourceTag}
               </div>
-              <div>
+              <div className="context-row">
                 <strong>Submitted Complaint:</strong> {complaintText}
               </div>
             </div>

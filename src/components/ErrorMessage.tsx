@@ -46,53 +46,18 @@ export function ErrorMessage({
       className={`error-message-banner ${className}`.trim()}
       role="alert"
       aria-live="assertive"
-      style={{
-        padding: '16px',
-        backgroundColor: '#fff5f5',
-        border: '1px solid #feb2b2',
-        borderRadius: '6px',
-        color: '#9b2c2c',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        margin: '16px 0',
-      }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-        <span aria-hidden="true" style={{ fontSize: '1.2rem', lineHeight: 1 }}>
-          ⚠️
-        </span>
-        <div style={{ flex: 1 }}>
-          <strong style={{ display: 'block', marginBottom: '4px', fontSize: '0.95rem' }}>
-            Generation Failed
-          </strong>
-          <span className="error-text-content" style={{ fontSize: '0.9rem', lineHeight: 1.4 }}>
-            {messageText}
-          </span>
-        </div>
-      </div>
-
+      <p className="error-text">
+        {messageText}
+      </p>
       {onRetry && (
-        <div style={{ alignSelf: 'flex-end' }}>
-          <button
-            type="button"
-            onClick={onRetry}
-            className="retry-button"
-            style={{
-              padding: '6px 12px',
-              backgroundColor: '#e53e3e',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-            }}
-          >
-            {retryLabel}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="retry-button"
+        >
+          {retryLabel}
+        </button>
       )}
     </div>
   );

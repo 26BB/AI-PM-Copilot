@@ -87,14 +87,13 @@ export function SourceTagSelector({
       aria-label="Feedback Source Channel Selector"
       style={{ marginBottom: '16px' }}
     >
-      {/* Replaced invalid htmlFor on div with span id + aria-labelledby for WCAG compliant group labeling */}
       <span
         id="source-tag-label"
         style={{
           display: 'block',
-          fontSize: '0.9rem',
+          fontSize: '0.85rem',
           fontWeight: 600,
-          color: '#2d3748',
+          color: 'var(--text-high, #0F172A)',
           marginBottom: '8px',
         }}
       >
@@ -119,18 +118,7 @@ export function SourceTagSelector({
               onClick={() => !disabled && onSelectTag(tag)}
               disabled={disabled}
               aria-pressed={isSelected}
-              style={{
-                padding: '6px 12px',
-                fontSize: '0.85rem',
-                fontWeight: isSelected ? 600 : 400,
-                borderRadius: '16px',
-                border: isSelected ? '1px solid #3182ce' : '1px solid #e2e8f0',
-                backgroundColor: isSelected ? '#ebf8ff' : '#f7fafc',
-                color: isSelected ? '#2b6cb0' : '#4a5568',
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                opacity: disabled ? 0.6 : 1,
-                transition: 'all 0.15s ease-in-out',
-              }}
+              className={`source-tag-chip ${isSelected ? 'active' : ''}`}
             >
               {formatSourceTagLabel(tag)}
             </button>
