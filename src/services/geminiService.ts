@@ -275,9 +275,14 @@ export function parseGeminiResponse(rawText: string): AnalysisResult {
  *
  * @param complaint - Raw user feedback string
  * @param sourceTag - Optional customer feedback channel tag context
+ * @param timeoutMs - Optional request timeout in milliseconds (defaults to 30,000ms)
  * @returns Promise resolving to AnalysisResult containing PRD, RICE, and A/B test specifications
  */
-export async function generateProductArtifacts(complaint: string, sourceTag?: string): Promise<AnalysisResult> {
+export async function generateProductArtifacts(
+  complaint: string,
+  sourceTag?: string,
+  timeoutMs: number = 30000
+): Promise<AnalysisResult> {
   const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
@@ -287,27 +292,43 @@ export async function generateProductArtifacts(complaint: string, sourceTag?: st
   const prompt = buildGeminiPrompt(complaint, sourceTag);
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            {
-              text: prompt,
-            },
-          ],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.2,
-        responseMimeType: 'application/json',
+  // WHY: Without a network timeout, upstream API stalls or dropped connections leave the UI
+  // in an infinite loading state with no error banner or retry trigger. An explicit timeout
+  // fails cleanly and unblocks the user interface.
+  const signal = typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
+    ? AbortSignal.timeout(timeoutMs)
+    : undefined;
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      signal,
+      headers: {
+        'Content-Type': 'application/json',
       },
-    }),
-  });
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: 'application/json',
+        },
+      }),
+    });
+  } catch (err) {
+    if (err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')) {
+      throw new Error(`Gemini API request timed out after ${timeoutMs}ms. Please try again.`);
+    }
+    throw err;
+  }
 
   if (!response.ok) {
     const errorText = await response.text();

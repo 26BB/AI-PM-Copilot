@@ -15,6 +15,15 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-11-08 — Add Request Timeout Protection to Gemini API Calls
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Hardened `generateProductArtifacts` in `src/services/geminiService.ts` by introducing request timeout protection with `AbortSignal.timeout(timeoutMs)` (defaulting to 30,000ms).
+- 🛡️ Trapped `TimeoutError` / `AbortError` and mapped them to user-friendly descriptive error messages, preventing indefinite loading freezes in the UI and unblocking the error retry action when upstream Gemini API calls stall or drop connections.
+- 🧪 Added unit test coverage in `src/tests/geminiService.test.ts` verifying that request timeouts produce clear error messages.
+- 🧹 Verified all 91 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): add request timeout protection to gemini api calls [2026-11-08]`
+
 ### 2026-11-07 — Harden RICE Calculation & Heuristic Routing Against Non-Finite & Malformed Inputs
 **Status:** ✅ Fixed
 **Fixed:**

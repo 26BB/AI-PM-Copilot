@@ -173,6 +173,23 @@ describe('Gemini API Integration Service', () => {
   });
 
   /**
+   * Real-world scenario: Upstream Gemini API request hangs or network times out.
+   * Expectation: Throws descriptive timeout error with duration to unblock UI loading state and enable retry.
+   */
+  it('throws descriptive timeout error when network request times out or aborts', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini-api-key';
+
+    const timeoutError = new Error('The operation was aborted due to timeout');
+    timeoutError.name = 'TimeoutError';
+
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(timeoutError);
+
+    await expect(
+      generateProductArtifacts('Checkout verification failed repeatedly', 'App Store', 5000)
+    ).rejects.toThrow('Gemini API request timed out after 5000ms. Please try again.');
+  });
+
+  /**
    * Real-world scenario: Gemini API returns output surrounded by conversational preamble or postamble text.
    * Expectation: Response parser extracts JSON block successfully and returns structured AnalysisResult.
    */
