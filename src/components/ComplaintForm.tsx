@@ -28,6 +28,15 @@ export interface ComplaintFormProps {
  * @returns ComplaintValidationResult indicating if input is valid and any validation error message
  */
 export function validateComplaint(complaint: string): ComplaintValidationResult {
+  // WHY: Validating input is string protects against unhandled TypeErrors (e.g. complaint.trim is not a function)
+  // if null, undefined, or malformed payloads from external integrations or untyped form state are passed.
+  if (typeof complaint !== 'string') {
+    return {
+      isValid: false,
+      error: 'Complaint text must be a valid string.',
+    };
+  }
+
   const trimmed = complaint.trim();
   if (!trimmed) {
     return {
