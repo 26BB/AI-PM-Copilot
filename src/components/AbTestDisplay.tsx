@@ -27,10 +27,12 @@ export function formatAbTestMetric(metric?: string): string {
  * Formats A/B test setup into plain text format suitable for copying to clipboard.
  *
  * @param abTest - AbTestSuggestion object
+ * @param formattedMetric - Optional pre-formatted success metric string to avoid redundant computation
  * @returns Formatted plain text string of A/B experiment details
  */
-export function formatAbTestSummaryText(abTest: AbTestSuggestion): string {
-  const metric = formatAbTestMetric(abTest.successMetric);
+export function formatAbTestSummaryText(abTest: AbTestSuggestion, formattedMetric?: string): string {
+  // WHY: Reuse pre-computed formattedMetric when provided to eliminate redundant formatAbTestMetric invocations
+  const metric = formattedMetric ?? formatAbTestMetric(abTest.successMetric);
   return `Hypothesis: ${abTest.hypothesis || 'Implementing proposed changes will resolve customer friction.'}
 Control Variant (A): ${abTest.controlVariant || 'Current baseline experience'}
 Test Variant (B): ${abTest.testVariant || 'Proposed solution experience'}
@@ -46,7 +48,8 @@ Primary Success Metric: ${metric}`;
  */
 export function AbTestDisplay({ abTest, className = '' }: AbTestDisplayProps): React.JSX.Element {
   const formattedMetric = formatAbTestMetric(abTest.successMetric);
-  const copySummaryText = formatAbTestSummaryText(abTest);
+  // WHY: Pass formattedMetric to avoid redundant formatAbTestMetric call during rendering
+  const copySummaryText = formatAbTestSummaryText(abTest, formattedMetric);
 
   return (
     <section
