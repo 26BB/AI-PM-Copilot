@@ -470,4 +470,31 @@ describe('Gemini API Integration Service', () => {
       'true',
     ]);
   });
+
+  /**
+   * Real-world scenario: Gemini API output is enclosed in markdown code fences but contains invalid or truncated JSON syntax.
+   * Expectation: parseGeminiResponse extracts the fenced block and throws a descriptive error indicating failure to parse JSON.
+   */
+  it('throws descriptive error when markdown code block contains invalid JSON syntax', () => {
+    const fencedMalformed = '```json\n{ "prdSkeleton": { "problemStatement": "Truncated...\n```';
+    expect(() => parseGeminiResponse(fencedMalformed)).toThrow('Failed to parse Gemini API JSON response');
+  });
+
+  /**
+   * Real-world scenario: Gemini API returns truncated or malformed JSON with curly braces outside of code blocks.
+   * Expectation: parseGeminiResponse identifies brace boundaries but throws a descriptive error upon parsing invalid JSON.
+   */
+  it('throws descriptive error when response contains malformed JSON with braces', () => {
+    const malformedWithBraces = 'Analysis result: { invalid_key: undefined, prdSkeleton: { }';
+    expect(() => parseGeminiResponse(malformedWithBraces)).toThrow('Failed to parse Gemini API JSON response');
+  });
+
+  /**
+   * Real-world scenario: Gemini API returns an empty string or whitespace-only response.
+   * Expectation: parseGeminiResponse throws a descriptive error rather than returning unhandled errors.
+   */
+  it('throws descriptive error when raw response is empty or whitespace only', () => {
+    expect(() => parseGeminiResponse('')).toThrow('Failed to parse Gemini API JSON response');
+    expect(() => parseGeminiResponse('   \n\t  ')).toThrow('Failed to parse Gemini API JSON response');
+  });
 });
