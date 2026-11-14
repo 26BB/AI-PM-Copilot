@@ -7,6 +7,32 @@ import { render, screen, fireEvent } from '@testing-library/react';
 
 describe('validateComplaint logic', () => {
   /**
+   * Real-world scenario: Unvalidated payload or external integration passes null, undefined, or non-string values to validateComplaint.
+   * Expectation: Function returns invalid validation result with descriptive error instead of throwing unhandled TypeError.
+   */
+  it('rejects null, undefined, and non-string inputs safely without throwing errors', () => {
+    // @ts-expect-error Testing runtime resilience against null input
+    const nullResult = validateComplaint(null);
+    expect(nullResult.isValid).toBe(false);
+    expect(nullResult.error).toBe('Complaint text must be a valid string.');
+
+    // @ts-expect-error Testing runtime resilience against undefined input
+    const undefinedResult = validateComplaint(undefined);
+    expect(undefinedResult.isValid).toBe(false);
+    expect(undefinedResult.error).toBe('Complaint text must be a valid string.');
+
+    // @ts-expect-error Testing runtime resilience against number input
+    const numberResult = validateComplaint(12345);
+    expect(numberResult.isValid).toBe(false);
+    expect(numberResult.error).toBe('Complaint text must be a valid string.');
+
+    // @ts-expect-error Testing runtime resilience against object input
+    const objectResult = validateComplaint({ text: 'complaint' });
+    expect(objectResult.isValid).toBe(false);
+    expect(objectResult.error).toBe('Complaint text must be a valid string.');
+  });
+
+  /**
    * Real-world scenario: User submits empty or whitespace-only feedback.
    * Expectation: Validation fails and alerts user that complaint cannot be empty.
    */

@@ -15,6 +15,14 @@
 
 ## ✅ Completed Log (most recent first)
 
+### 2026-11-11 — Harden Complaint Input Validation Against Non-String Inputs
+**Status:** ✅ Fixed
+**Fixed:**
+- 🛡️ Hardened `validateComplaint` in `src/components/ComplaintForm.tsx` to validate input types using `typeof complaint !== 'string'`. Non-string, `null`, or `undefined` inputs are safely caught upfront and return a descriptive validation error instead of throwing unhandled runtime `TypeError: Cannot read properties of undefined (reading 'trim')` exceptions.
+- 🧪 Added unit test coverage in `src/tests/ComplaintForm.test.tsx` verifying that `null`, `undefined`, numbers, and objects are safely rejected with descriptive errors without throwing.
+- 🧹 Verified all 92 unit tests pass across 12 test files, `npx tsc --noEmit` passes with 0 errors, and `npm run build` succeeds cleanly.
+**PR:** `chore(atlas): harden complaint validation against non-string inputs [2026-11-11]`
+
 ### 2026-11-08 — Add Request Timeout Protection to Gemini API Calls
 **Status:** ✅ Fixed
 **Fixed:**
