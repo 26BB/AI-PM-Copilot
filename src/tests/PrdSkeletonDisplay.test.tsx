@@ -3,7 +3,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { PrdSkeletonDisplay, normalizeAcceptanceCriteria } from '../components/PrdSkeletonDisplay';
+import { PrdSkeletonDisplay, normalizeAcceptanceCriteria, formatPrdMarkdown } from '../components/PrdSkeletonDisplay';
 import { PrdSkeleton } from '../services/geminiService';
 
 describe('normalizeAcceptanceCriteria helper logic', () => {
@@ -87,5 +87,36 @@ describe('PrdSkeletonDisplay Component', () => {
     expect(screen.getByText('Target User')).toBeDefined();
     expect(screen.getByText('As a user, I want features to work properly so that I can accomplish my goals.')).toBeDefined();
     expect(screen.getByText('Feature functionality must be verified against expected behavior.')).toBeDefined();
+  });
+});
+
+describe('formatPrdMarkdown helper logic', () => {
+  const samplePrd: PrdSkeleton = {
+    problemStatement: 'Problem statement text.',
+    userPersona: 'Product Manager',
+    userStory: 'As a PM, I want formatPrdMarkdown to work efficiently.',
+    acceptanceCriteria: ['  Item 1  ', 'Item 2'],
+  };
+
+  /**
+   * Real-world scenario: Caller invokes formatPrdMarkdown without providing pre-normalized criteria.
+   * Expectation: formatPrdMarkdown falls back to normalizing criteria automatically.
+   */
+  it('formats PRD markdown using internal normalization when criteriaList is omitted', () => {
+    const markdown = formatPrdMarkdown(samplePrd);
+    expect(markdown).toContain('## Problem Statement\nProblem statement text.');
+    expect(markdown).toContain('## User Persona\nProduct Manager');
+    expect(markdown).toContain('## User Story\nAs a PM, I want formatPrdMarkdown to work efficiently.');
+    expect(markdown).toContain('## Acceptance Criteria\n- Item 1\n- Item 2');
+  });
+
+  /**
+   * Real-world scenario: PrdSkeletonDisplay provides pre-normalized criteria to avoid redundant execution.
+   * Expectation: formatPrdMarkdown uses the supplied pre-normalized criteria without re-normalizing.
+   */
+  it('formats PRD markdown reusing the provided pre-normalized criteriaList', () => {
+    const preNormalized = ['Pre-normalized Criterion A', 'Pre-normalized Criterion B'];
+    const markdown = formatPrdMarkdown(samplePrd, preNormalized);
+    expect(markdown).toContain('## Acceptance Criteria\n- Pre-normalized Criterion A\n- Pre-normalized Criterion B');
   });
 });
