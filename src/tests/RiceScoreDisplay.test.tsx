@@ -3,7 +3,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { RiceScoreDisplay, getPriorityTier, formatRiceMetric } from '../components/RiceScoreDisplay';
+import { RiceScoreDisplay, getPriorityTier, formatRiceMetric, formatRiceSummaryText } from '../components/RiceScoreDisplay';
 import { RiceScoreReasoning } from '../services/geminiService';
 
 describe('getPriorityTier logic', () => {
@@ -76,6 +76,40 @@ describe('formatRiceMetric helper logic', () => {
     expect(formatRiceMetric(NaN, 'confidence')).toBe('0%');
     expect(formatRiceMetric(NaN, 'effort')).toBe('0 person-weeks');
     expect(formatRiceMetric(NaN, 'score')).toBe('0.0');
+  });
+});
+
+describe('formatRiceSummaryText helper logic', () => {
+  const sampleRice: RiceScoreReasoning = {
+    reach: 5000,
+    impact: 2.0,
+    confidence: 80,
+    effort: 1.0,
+    score: 8.0,
+    reasoning: 'Sample reasoning',
+  };
+
+  /**
+   * Real-world scenario: Generating clipboard summary text without explicitly passing a priority tier.
+   * Expectation: Helper function defaults to computing the tier internally and outputs expected formatted summary.
+   */
+  it('formats summary text correctly when tier is omitted (defaults to computed tier)', () => {
+    const summary = formatRiceSummaryText(sampleRice);
+    expect(summary).toContain('RICE Score: 8.0 (Medium Priority)');
+    expect(summary).toContain('- Reach: 5,000 users/mo');
+    expect(summary).toContain('- Impact: 2.0 (scale 0.5–3.0)');
+    expect(summary).toContain('- Confidence: 80%');
+    expect(summary).toContain('- Effort: 1 person-week');
+    expect(summary).toContain('Reasoning:\nSample reasoning');
+  });
+
+  /**
+   * Real-world scenario: Component passes a pre-computed priority tier to optimize rendering performance.
+   * Expectation: Helper function directly formats the summary using the supplied tier argument without recomputation.
+   */
+  it('formats summary text using supplied pre-calculated priority tier', () => {
+    const summary = formatRiceSummaryText(sampleRice, 'High Priority');
+    expect(summary).toContain('RICE Score: 8.0 (High Priority)');
   });
 });
 
